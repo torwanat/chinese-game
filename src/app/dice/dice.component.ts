@@ -1,16 +1,22 @@
 import { Component } from '@angular/core';
+import { BoardService } from '../board.service';
 
 @Component({
-  selector: 'app-dice',
-  standalone: true,
-  imports: [],
-  templateUrl: './dice.component.html',
-  styleUrl: './dice.component.css'
+	selector: 'app-dice',
+	standalone: true,
+	imports: [],
+	templateUrl: './dice.component.html',
+	styleUrl: './dice.component.css'
 })
 export class DiceComponent {
-  public id: number = 6;
+	public result: number = 0;
 
-  roll() {
-    this.id = Math.floor(Math.random() * (6) + 1);
-  }
+	public constructor(private boardService: BoardService) {
+
+	}
+
+	roll() {
+		this.result = Math.floor(Math.random() * (6) + 1);
+		this.boardService.getRollResult(this.result);
+	}
 }

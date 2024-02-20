@@ -1,55 +1,108 @@
 import { Component } from '@angular/core';
 import { TileComponent } from '../tile/tile.component';
 import { CommonModule } from '@angular/common';
-import { tileIDs } from '../tileIDs';
-
-type Tile = {
-  id: number,
-  color: string,
-  visible: boolean
-}
+import { finishes, spawns, starts, tiles } from '../tileIDs';
+import { BoardService } from '../board.service';
+import { gamePath, offsets } from '../gamePath';
+import { Pawn, Tile } from '../types';
 
 @Component({
-  selector: 'app-board',
-  standalone: true,
-  imports: [TileComponent, CommonModule],
-  templateUrl: './board.component.html',
-  styleUrl: './board.component.css'
+	selector: 'app-board',
+	standalone: true,
+	imports: [TileComponent, CommonModule],
+	templateUrl: './board.component.html',
+	styleUrl: './board.component.css'
 })
 
 export class BoardComponent {
-  public tempList: Array<Tile> = [];
+	public tempList: Array<Tile> = [];
+	private rollResult: number = 0;
+	private pawns: Array<Pawn> = [];
 
-  /**
-   *
-   */
-  constructor() {
-    for (let i = 0; i < 121; i++) {
-      let color = "";
+	constructor(private boardService: BoardService) {
+		this.pawns = this.boardService.getPawnsPositions();
+		console.log("here");
 
-      if (tileIDs.redSpawn.includes(i)) {
-        color = "red";
-      } else if (tileIDs.blueSpawn.includes(i)) {
-        color = "blue";
-      } else if (tileIDs.yellowSpawn.includes(i)) {
-        color = "yellow";
-      } else if (tileIDs.greensSpawn.includes(i)) {
-        color = "green";
-      } else if (tileIDs.redFinish.includes(i)) {
-        color = "pink";
-      } else if (tileIDs.blueFinish.includes(i)) {
-        color = "lightblue";
-      } else if (tileIDs.yellowFinish.includes(i)) {
-        color = "lightyellow";
-      } else if (tileIDs.greenFinish.includes(i)) {
-        color = "lightgreen";
-      }
+		this.generateBoard();
+		this.placePawns();
+		this.subscribeToBoardService();
+	}
 
-      this.tempList.push({
-        id: i,
-        color,
-        visible: tileIDs.tiles.includes(i)
-      });
-    }
-  }
+	private generateBoard() {
+		this.tempList.length = 0;
+		for (let i = 0; i < 121; i++) {
+			let color = "";
+
+			for (const [spawnColor, spawnTiles] of Object.entries(spawns)) {
+				if (spawnTiles.includes(i)) {
+					color = spawnColor;
+					break;
+				}
+			}
+
+			for (const [finishColor, finishTiles] of Object.entries(finishes)) {
+				if (color != "") break;
+				if (finishTiles.includes(i)) {
+					switch (finishColor) {
+						case "red":
+							color = "pink";
+							break;
+						case "blue":
+						case "green":
+						case "yellow":
+							color = "light" + finishColor;
+							break;
+						default:
+							break;
+					}
+					break;
+				}
+			}
+
+			for (const [startColor, startTile] of Object.entries(starts)) {
+				if (color != "") break;
+				if (startTile == i) {
+					color = startColor;
+					break;
+				}
+			}
+
+			this.tempList.push({
+				id: i,
+				color,
+				visible: tiles.includes(i),
+				pawn: "none"
+			});
+		}
+	}
+
+	private placePawns() {
+		this.pawns.forEach((pawn: Pawn, index: number) => {
+			type ObjectKey = keyof typeof offsets;
+			const color: ObjectKey = pawn.color as ObjectKey;
+			let tile: number = 0;
+			if (pawn.moved > 39) {
+				tile = finishes[color][pawn.moved - gamePath.length];
+			} else if (pawn.moved < 0) {
+				tile = spawns[color][index % 4];
+			} else {
+				tile = gamePath[(pawn.moved + offsets[color]) % gamePath.length];
+			}
+			this.tempList[tile].pawn = pawn.color;
+		});
+	}
+
+	private subscribeToBoardService() {
+		this.boardService.getRollResult$.subscribe((result) => {
+			this.rollResult = result;
+		});
+
+		this.boardService.pawnTiles$.subscribe((pawns) => {
+			this.pawns = pawns;
+			console.log(pawns);
+
+			this.generateBoard();
+			this.placePawns();
+		})
+	}
 }

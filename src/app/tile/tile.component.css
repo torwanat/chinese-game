@@ -1,21 +1,22 @@
 .tile {
-    box-sizing: border-box;
-    aspect-ratio: 1;
-    border: 1px solid black;
-    margin: 10px;
-    text-align: center;
-    display: flex;
-    align-content: center;
-    justify-content: center;
+	box-sizing: border-box;
+	aspect-ratio: 1;
+	border: 1px solid black;
+	margin: 10px;
+	text-align: center;
+	display: flex;
+	align-content: center;
+	justify-content: center;
 }
 
 .hidden {
-    display: none;
+	display: none;
 }
 
 .pawn {
-    display: inline-block;
-    border-radius: 50%;
-    width: 50%;
-    height: 50%;
+	display: inline-block;
+	border-radius: 50%;
+	width: 50%;
+	height: 50%;
+	border: 3px solid white;
 }

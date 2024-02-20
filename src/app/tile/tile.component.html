@@ -1,4 +1,3 @@
 <div [ngClass]="{'hidden': !visible, 'tile': true}" [ngStyle]="{'background-color':color}">
-    <!-- <div class="pawn" [ngStyle]="{'background-color': pawn}"></div> -->
-    <p>{{id}}</p>
+	<div (click)="move()" [ngClass]="{'pawn': pawn != 'none'}" [ngStyle]="{'background-color': pawn}">{{id}}</div>
 </div>
