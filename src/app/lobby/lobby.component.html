@@ -1,0 +1,13 @@
+<div class="lobby">
+	<div *ngFor="let player of players" class="player-container"
+		[ngStyle]="{'background-color': player.status == 1 ? player.color : 'none'}">
+		{{player.nick}}
+	</div>
+</div>
+<div *ngIf="gameStarted">
+	<app-dice></app-dice>
+	<app-board></app-board>
+</div>
+<div #elseBlock>
+	<button (click)="toggleReady()">{{ready? "Not ready!" : "Ready!"}}</button>
+</div>

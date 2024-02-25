@@ -16,12 +16,10 @@ import { Pawn, Tile } from '../types';
 
 export class BoardComponent {
 	public tempList: Array<Tile> = [];
-	private rollResult: number = 0;
 	private pawns: Array<Pawn> = [];
 
 	constructor(private boardService: BoardService) {
 		this.pawns = this.boardService.getPawnsPositions();
-		console.log("here");
 
 		this.generateBoard();
 		this.placePawns();
@@ -81,7 +79,7 @@ export class BoardComponent {
 			type ObjectKey = keyof typeof offsets;
 			const color: ObjectKey = pawn.color as ObjectKey;
 			let tile: number = 0;
-			if (pawn.moved > 39) {
+			if (pawn.moved >= gamePath.length) {
 				tile = finishes[color][pawn.moved - gamePath.length];
 			} else if (pawn.moved < 0) {
 				tile = spawns[color][index % 4];
@@ -93,13 +91,8 @@ export class BoardComponent {
 	}
 
 	private subscribeToBoardService() {
-		this.boardService.getRollResult$.subscribe((result) => {
-			this.rollResult = result;
-		});
-
 		this.boardService.pawnTiles$.subscribe((pawns) => {
 			this.pawns = pawns;
-			console.log(pawns);
 
 			this.generateBoard();
 			this.placePawns();

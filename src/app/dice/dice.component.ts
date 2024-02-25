@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { BoardService } from '../board.service';
+import { GameService } from '../game.service';
 
 @Component({
 	selector: 'app-dice',
@@ -11,8 +12,15 @@ import { BoardService } from '../board.service';
 export class DiceComponent {
 	public result: number = 0;
 
-	public constructor(private boardService: BoardService) {
+	public constructor(private boardService: BoardService, private gameService: GameService) {
+		this.subscribeToGameService();
+	}
 
+	private subscribeToGameService() {
+		this.gameService.roll$.subscribe((result) => {
+			console.log(result);
+			this.result = result;
+		});
 	}
 
 	roll() {

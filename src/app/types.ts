@@ -7,5 +7,31 @@ export type Tile = {
 
 export type Pawn = {
 	moved: number,
+	color: string,
+	id: number
+}
+
+export type Player = {
+	nick: string,
+	status: number,
 	color: string
 }
+
+export type GameData = {
+	status: number,
+	nick: string,
+	color: string,
+	uid: string,
+	pawns: Array<Pawn>,
+	players: Array<Player>
+}
+
+export type Game = {
+	uid: string,
+	status: number,
+	pawns: Array<Pawn>,
+	players: Array<Player>,
+	roll: number
+}
+
+export type UpdateType = "STATUS" | "MOVE" | "ROLL";
