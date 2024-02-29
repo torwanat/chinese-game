@@ -11,6 +11,7 @@ import { GameService } from '../game.service';
 })
 export class DiceComponent {
 	public result: number = 0;
+	public disabled: boolean = true;
 
 	public constructor(private boardService: BoardService, private gameService: GameService) {
 		this.subscribeToGameService();

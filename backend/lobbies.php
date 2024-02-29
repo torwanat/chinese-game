@@ -1,5 +1,5 @@
 <?php
-session_start();
+// session_start();
 
 require "config.php";
 require "player.php";
@@ -33,7 +33,7 @@ stream_copy_to_stream($rawInput, $tempStream);
 rewind($tempStream);
 $post_data = json_decode(stream_get_contents($tempStream), true);
 
-$colors = array("red", "blue", "green", "yellow"); # all color
+$colors = array("red", "blue", "green", "yellow"); # all colors
 
 $games = getGames(); # games from database
 
@@ -79,7 +79,7 @@ if ($post_data['uid'] == "") { # second request, nick but no game
 
             $game->addPlayer($nick, $color);
             if (count($game->players) == 4) {
-                $game->status = 1;
+                $game->startGame();
             }
             updateGame($game->uid, $game);
             sendStatus("OK2", $nick, $color, $game); # exits
@@ -131,7 +131,7 @@ if (isset($post_data['type'])) { # ongoing game updated
 
         # if everyone ready, start game
         if ($ready_counter >= 2 || count($game->players) == 4) {
-            $game->status = 1;
+            $game->startGame();
         }
     } else if ($type == "MOVE") {
         $game->pawns = $post_data['pawns'];

@@ -40,6 +40,19 @@ class Game implements JsonSerializable
         array_push($this->players, new Player($nick, $color));
     }
 
+    function startGame()
+    {
+        $this->status = 1;
+        for ($i = 0; $i < count($this->players); $i++) {
+            $player = $this->players[$i];
+            if ($player->color == "red") {
+                $player->status = 3;
+            } else {
+                $player->status = 2;
+            }
+        }
+    }
+
     function jsonSerialize()
     {
         return array(

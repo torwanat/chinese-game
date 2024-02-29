@@ -88,6 +88,13 @@ export class BoardService {
 			}
 			if (spawn) {
 				console.log("spawn");
+
+				if (this.rollResult != 6 && this.rollResult != 1) {
+					return;
+				}
+
+				console.log("go");
+
 				const spawnIndex: number = spawns[pawnColor].indexOf(tileId);
 
 				for (let i = 0; i < tempPawns.length; i++) {
