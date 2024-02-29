@@ -113,7 +113,7 @@ foreach ($games as $row) { # find game with uid from request
 
 if (isset($post_data['type'])) { # ongoing game updated
     $type = $post_data['type'];
-    if ($type == "STATUS") {
+    if ($type == "STATUS") { # lobby changed (ready / unready)
         $ready_counter = 0;
 
         foreach ($game->players as $player) {
@@ -133,9 +133,9 @@ if (isset($post_data['type'])) { # ongoing game updated
         if ($ready_counter >= 2 || count($game->players) == 4) {
             $game->startGame();
         }
-    } else if ($type == "MOVE") {
+    } else if ($type == "MOVE") { # player moved
         $game->pawns = $post_data['pawns'];
-    } else if ($type == "ROLL") {
+    } else if ($type == "ROLL") { # new dice roll
         $game->roll = $post_data['roll'];
     }
 

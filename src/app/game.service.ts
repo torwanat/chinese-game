@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { Game, GameData, Pawn, Player, UpdateType } from './types';
+import { Game, Pawn, Player, UpdateType } from './types';
 
 @Injectable({
 	providedIn: 'root'
@@ -64,16 +64,17 @@ export class GameService {
 		} else {
 			this.playerNick = data.nick;
 			this.playerColor = data.color;
-			this.game.uid = data.game.uid;
-			this.game.status = data.game.status;
-			this.game.players = data.game.players;
-			this.game.pawns = data.game.pawns;
-			this.game.roll = data.game.roll;
 
-			this.pawnsSubject.next(this.game.pawns);
-			this.playersSubject.next(this.game.players);
-			this.rollSubject.next(this.game.roll);
-			this.gameStartedSubject.next(this.game.status == 1);
+			if (JSON.stringify(data.game) != JSON.stringify(this.game)) {
+
+				this.pawnsSubject.next(data.game.pawns);
+				if (JSON.stringify(this.game.players) != JSON.stringify(data.game.players)) {
+					this.playersSubject.next(data.game.players);
+				}
+				this.rollSubject.next(data.game.roll);
+				this.gameStartedSubject.next(data.game.status == 1);
+				this.game = data.game;
+			}
 		}
 	}
 
