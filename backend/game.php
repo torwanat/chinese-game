@@ -53,6 +53,29 @@ class Game implements JsonSerializable
         }
     }
 
+    function diceThrowMade(string $color)
+    {
+        for ($i = 0; $i < count($this->players); $i++) {
+            $player = $this->players[$i];
+            if ($player->color == $color) {
+                $player->status = 4;
+                break;
+            }
+        }
+    }
+
+    function nextPlayerTurn(string $color)
+    {
+        for ($i = 0; $i < count($this->players); $i++) {
+            $player = $this->players[$i];
+            if ($player->color == $color) {
+                $player->status = 2;
+                $this->players[($i + 1) % count($this->players)]->status = 3;
+                break;
+            }
+        }
+    }
+
     function jsonSerialize()
     {
         return array(

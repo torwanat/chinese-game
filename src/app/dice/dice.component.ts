@@ -21,25 +21,16 @@ export class DiceComponent {
 
 	private subscribeToGameService() {
 		this.gameService.roll$.subscribe((result: number) => {
-			console.log(result);
 			this.result = result;
 		});
 		this.gameService.players$.subscribe((players: Array<Player>) => {
-			console.log("morbius");
-
-			for (let i = 0; i < players.length; i++) {
-				const player: Player = players[i];
-				if (player.color == this.gameService.playerColor) {
-					this.disabled = player.status == 2;
-					break;
-				}
-			}
+			this.disabled = this.gameService.playerStatus != 3;
 		});
 	}
 
 	roll() {
 		this.result = Math.floor(Math.random() * (6) + 1);
+		// this.result = 2;
 		this.boardService.getRollResult(this.result);
-		this.disabled = true;
 	}
 }

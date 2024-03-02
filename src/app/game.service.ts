@@ -20,6 +20,7 @@ export class GameService {
 
 	public playerColor: string = "red";
 	public playerNick: string = "";
+	public playerStatus: number = 0;
 	private game: Game = {
 		uid: "",
 		status: 0,
@@ -50,7 +51,6 @@ export class GameService {
 			color,
 			uid
 		});
-		console.log(body);
 		const response: Response = await fetch("http://localhost/chinese/lobbies.php", {
 			method: "POST", body, headers: {
 				"Content-Type": "application/json"
@@ -66,11 +66,16 @@ export class GameService {
 			this.playerColor = data.color;
 
 			if (JSON.stringify(data.game) != JSON.stringify(this.game)) {
+				for (let i = 0; i < data.game.players.length; i++) {
+					const player: Player = data.game.players[i];
+					if (player.color == this.playerColor) {
+						this.playerStatus = player.status;
+						break;
+					}
+				}
 
 				this.pawnsSubject.next(data.game.pawns);
-				if (JSON.stringify(this.game.players) != JSON.stringify(data.game.players)) {
-					this.playersSubject.next(data.game.players);
-				}
+				this.playersSubject.next(data.game.players);
 				this.rollSubject.next(data.game.roll);
 				this.gameStartedSubject.next(data.game.status == 1);
 				this.game = data.game;
@@ -93,7 +98,6 @@ export class GameService {
 			}
 		});
 		const status = await response.json();
-		console.log(status);
 		this.sendRequest(this.playerNick, this.playerColor, this.game.uid);
 	}
 

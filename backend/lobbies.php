@@ -9,7 +9,7 @@ header("Access-Control-Allow-Origin: http://localhost:4200");
 header("Access-Control-Allow-Headers: Content-Type");
 
 
-function sendStatus(string $status, string $nick = "", string $color = "", object $game = null) # maybe send whole game?
+function sendStatus(string $status, string $nick = "", string $color = "", object $game = null)
 {
     echo json_encode(
         array(
@@ -133,10 +133,19 @@ if (isset($post_data['type'])) { # ongoing game updated
         if ($ready_counter >= 2 || count($game->players) == 4) {
             $game->startGame();
         }
-    } else if ($type == "MOVE") { # player moved
-        $game->pawns = $post_data['pawns'];
-    } else if ($type == "ROLL") { # new dice roll
-        $game->roll = $post_data['roll'];
+    } else {
+        if (isset($post_data['pawns'])) {
+            $game->pawns = $post_data['pawns'];
+        }
+        if (isset($post_data['roll'])) {
+            $game->roll = $post_data['roll'];
+        }
+        if ($type == "MOVE") {
+            $game->nextPlayerTurn($post_data['color']);
+        }
+        if ($type == "ROLL") {
+            $game->diceThrowMade($post_data['color']);
+        }
     }
 
     updateGame($post_data['uid'], $game);

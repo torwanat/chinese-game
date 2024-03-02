@@ -3,7 +3,7 @@
 class Player implements JsonSerializable
 {
     public $nick;
-    public $status = 0; # 0 - joined, 1 - ready, 2 - waiting for turn, 3 - playing turn
+    public $status = 0; # 0 - joined, 1 - ready, 2 - waiting for turn, 3 - waiting for throw, 4 - waiting for move
     public $color;
 
     function __construct(string $nick, string $color)

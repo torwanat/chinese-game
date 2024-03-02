@@ -8,7 +8,8 @@ export type Tile = {
 export type Pawn = {
 	moved: number,
 	color: string,
-	id: number
+	id: number,
+	highlited?: boolean
 }
 
 export type Player = {

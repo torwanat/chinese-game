@@ -21,7 +21,7 @@ export class TileComponent {
 
 	public move() {
 		if (this.pawn != "none") {
-			this.boardService.movePawn(this.id, this.pawn);
+			this.boardService.movePawn(this.id, this.pawn, false);
 		}
 	}
 }

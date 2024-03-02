@@ -13,27 +13,11 @@ export class BoardService {
 	public pawnTiles$: Observable<Array<Pawn>>;
 	private pawnTilesSubject = new Subject<Array<Pawn>>();
 
-	private pawns: Array<Pawn> = [
-		{ moved: -1, color: "red", id: 1 },
-		{ moved: -1, color: "red", id: 2 },
-		{ moved: -1, color: "red", id: 3 },
-		{ moved: -1, color: "red", id: 4 },
-		{ moved: -1, color: "blue", id: 5 },
-		{ moved: -1, color: "blue", id: 6 },
-		{ moved: -1, color: "blue", id: 7 },
-		{ moved: -1, color: "blue", id: 8 },
-		{ moved: -1, color: "green", id: 9 },
-		{ moved: -1, color: "green", id: 10 },
-		{ moved: -1, color: "green", id: 11 },
-		{ moved: -1, color: "green", id: 12 },
-		{ moved: -1, color: "yellow", id: 13 },
-		{ moved: -1, color: "yellow", id: 14 },
-		{ moved: -1, color: "yellow", id: 15 },
-		{ moved: -1, color: "yellow", id: 16 },
-	];
+	private pawns: Array<Pawn> = [];
 
 	private rollResult: number = 0;
 	private playerColor: string = "";
+	private canMove: boolean = false;
 
 	constructor(private gameService: GameService) {
 		this.pawnTiles$ = this.pawnTilesSubject.asObservable();
@@ -43,7 +27,13 @@ export class BoardService {
 
 	public getRollResult(result: number) {
 		this.rollResult = result;
-		this.gameService.updateMade("ROLL", undefined, result);
+
+		const pawnsToHighlight: Array<Pawn> = this.highlightOptions();
+		if (pawnsToHighlight.length) {
+			this.gameService.updateMade("ROLL", undefined, result);
+		} else {
+			this.gameService.updateMade("MOVE", undefined, result);
+		}
 	}
 
 	public getPawnsPositions() {
@@ -52,18 +42,37 @@ export class BoardService {
 
 	private subscribeToGameService() {
 		this.gameService.pawns$.subscribe((pawns) => {
+			this.canMove = this.gameService.playerStatus == 4;
+
 			this.pawns = pawns;
 			this.pawnTilesSubject.next(this.pawns);
 		});
 	}
 
-	public movePawn(tileId: number, pawnColor: string) {
-		if (pawnColor != this.playerColor) return;
+	private highlightOptions() {
+		const pawnsToHighlight = this.pawns.filter((pawn: Pawn, index: number) => {
+			if (pawn.color != this.playerColor) return false;
+			type ObjectKey = keyof typeof offsets;
+			const color: ObjectKey = pawn.color as ObjectKey;
+			let tile: number = 0;
+			if (pawn.moved >= gamePath.length) {
+				tile = finishes[color][pawn.moved - gamePath.length];
+			} else if (pawn.moved < 0) {
+				tile = spawns[color][index % 4];
+			} else {
+				tile = gamePath[(pawn.moved + offsets[color]) % gamePath.length];
+			}
+			return this.movePawn(tile, pawn.color, true);
+		});
+		return pawnsToHighlight;
+	}
+
+	public movePawn(tileId: number, pawnColor: string, fake: boolean) {
+		if (pawnColor != this.playerColor || (!this.canMove && !fake)) return false;
 
 		const tempPawns: Array<Pawn> = JSON.parse(JSON.stringify(this.pawns)); //deep copy of literal-structures array
 
 		if (gamePath.includes(tileId)) {
-			console.log("gamepath");
 			let moved: number = gamePath.indexOf(tileId) - offsets[pawnColor];
 			if (moved < 0) moved += gamePath.length;
 
@@ -87,13 +96,11 @@ export class BoardService {
 				}
 			}
 			if (spawn) {
-				console.log("spawn");
 
 				if (this.rollResult != 6 && this.rollResult != 1) {
-					return;
+					return false;
 				}
 
-				console.log("go");
 
 				const spawnIndex: number = spawns[pawnColor].indexOf(tileId);
 
@@ -105,7 +112,6 @@ export class BoardService {
 					}
 				}
 			} else {
-				console.log("finish");
 				const finishIndex = finishes[pawnColor].indexOf(tileId);
 
 				tempPawns.forEach(pawn => {
@@ -120,58 +126,66 @@ export class BoardService {
 			}
 		}
 
-		this.checkForCollision(pawnColor, tempPawns);
+		return this.checkForCollision(pawnColor, tempPawns, fake);
 	}
 
-	private checkForCollision(currentPawnColor: string, tempPawns: Array<Pawn>) {
-		const tiles: Array<number> = [];
-		let collisionTile: number = -1;
+	private checkForCollision(currentPawnColor: string, tempPawns: Array<Pawn>, fake: boolean) {
+		const tiles: Array<{ color: string, id: number }> = [];
+		let collisionTileId: number = -1;
 
 		for (let i = 0; i < tempPawns.length; i++) {
 			const pawn = tempPawns[i];
 			type ObjectKey = keyof typeof offsets;
 			const color: ObjectKey = pawn.color as ObjectKey;
-			let tile: number = 0;
+			let tileId: number = 0;
 			if (pawn.moved >= gamePath.length) {
-				tile = finishes[color][pawn.moved - gamePath.length];
+				tileId = finishes[color][pawn.moved - gamePath.length];
 			} else if (pawn.moved < 0) {
-				tile = spawns[color][i % 4];
+				tileId = spawns[color][i % 4];
 			} else {
-				tile = gamePath[(pawn.moved + offsets[color]) % gamePath.length];
+				tileId = gamePath[(pawn.moved + offsets[color]) % gamePath.length];
 			}
-			if (tiles.includes(tile)) {
-				collisionTile = tile;
-				break;
-			} else {
-				tiles.push(tile);
+			for (let i = 0; i < tiles.length; i++) {
+				const tile = tiles[i];
+				if (tile.id == tileId && tile.color != color) {
+					collisionTileId = tileId;
+					break;
+				}
 			}
+			tiles.push({ color: color.toString(), id: tileId });
+
 		};
 
-		if (collisionTile != -1) {
+		if (collisionTileId != -1) {
 			for (const [_, finishTiles] of Object.entries(finishes)) {
-				if (finishTiles.includes(collisionTile)) return;
+				if (finishTiles.includes(collisionTileId)) return false;
 			}
 
 			for (let i = 0; i < tempPawns.length; i++) {
 				const pawn = tempPawns[i];
 				type ObjectKey = keyof typeof offsets;
 				const color: ObjectKey = pawn.color as ObjectKey;
-				let tile: number = 0;
+				let tileId: number = 0;
 				if (pawn.moved >= gamePath.length) {
-					tile = finishes[color][pawn.moved - gamePath.length];
+					tileId = finishes[color][pawn.moved - gamePath.length];
 				} else if (pawn.moved < 0) {
-					tile = spawns[color][i % 4];
+					tileId = spawns[color][i % 4];
 				} else {
-					tile = gamePath[(pawn.moved + offsets[color]) % gamePath.length];
+					tileId = gamePath[(pawn.moved + offsets[color]) % gamePath.length];
 				}
-				if (tile == collisionTile && pawn.color != currentPawnColor) {
+				if (tileId == collisionTileId && pawn.color != currentPawnColor) {
 					pawn.moved = -1;
 				}
 			};
 		}
 
-		this.pawns = JSON.parse(JSON.stringify(tempPawns)); //deep copy of literal-structures array
-		this.gameService.updateMade("MOVE", this.pawns);
-		this.pawnTilesSubject.next(this.pawns);
+		if (fake) {
+			return true;
+		} else {
+			this.pawns = JSON.parse(JSON.stringify(tempPawns)); //deep copy of literal-structures array
+			this.gameService.updateMade("MOVE", this.pawns);
+			this.pawnTilesSubject.next(this.pawns);
+			return true;
+		}
 	}
 }
