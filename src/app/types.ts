@@ -3,7 +3,8 @@ export type Tile = {
 	color: string,
 	visible: boolean,
 	pawn: string,
-	highlighted: boolean
+	highlighted: boolean,
+	proposition: boolean
 }
 
 export type Pawn = {
@@ -33,7 +34,8 @@ export type Game = {
 	status: number,
 	pawns: Array<Pawn>,
 	players: Array<Player>,
-	roll: number
+	roll: number,
+	winner: string
 }
 
-export type UpdateType = "STATUS" | "MOVE" | "ROLL";
+export type UpdateType = "STATUS" | "MOVE" | "ROLL" | "WIN";

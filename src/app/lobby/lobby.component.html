@@ -4,10 +4,15 @@
 		{{player.nick}}
 	</div>
 </div>
-<div *ngIf="gameStarted">
+<div *ngIf="gameStarted; else controls">
 	<app-dice></app-dice>
 	<app-board></app-board>
 </div>
-<div #elseBlock>
-	<button (click)="toggleReady()">{{ready? "Not ready!" : "Ready!"}}</button>
-</div>
+<ng-template #controls>
+	<div *ngIf="winner; else ready_button">
+		<h1>{{winner}} won!</h1>
+	</div>
+	<ng-template #ready_button>
+		<button (click)="toggleReady()">{{ready? "Not ready!" : "Ready!"}}</button>
+	</ng-template>
+</ng-template>

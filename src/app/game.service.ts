@@ -18,6 +18,9 @@ export class GameService {
 	public roll$: Observable<number>;
 	private rollSubject = new Subject<number>();
 
+	public winner$: Observable<string>;
+	private winnerSubject = new Subject<string>();
+
 	public playerColor: string = "red";
 	public playerNick: string = "";
 	public playerStatus: number = 0;
@@ -26,7 +29,8 @@ export class GameService {
 		status: 0,
 		players: [],
 		pawns: [],
-		roll: 0
+		roll: 0,
+		winner: ""
 	}
 
 	constructor() {
@@ -34,6 +38,7 @@ export class GameService {
 		this.players$ = this.playersSubject.asObservable();
 		this.pawns$ = this.pawnsSubject.asObservable();
 		this.roll$ = this.rollSubject.asObservable();
+		this.winner$ = this.winnerSubject.asObservable();
 		this.startShortPolling();
 	}
 
@@ -78,6 +83,7 @@ export class GameService {
 				this.playersSubject.next(data.game.players);
 				this.rollSubject.next(data.game.roll);
 				this.gameStartedSubject.next(data.game.status == 1);
+				this.winnerSubject.next(data.game.winner);
 				this.game = data.game;
 			}
 		}

@@ -7,6 +7,7 @@ class Game implements JsonSerializable
     public $players = array();
     public $pawns = array();
     public $roll = 0;
+    public $winner = "";
 
     function __construct(object $template = null)
     {
@@ -16,6 +17,7 @@ class Game implements JsonSerializable
             $this->players = $template->players;
             $this->pawns = $template->pawns;
             $this->roll = $template->roll;
+            $this->winner = $template->winner;
         } else {
             $colors = array("red", "blue", "green", "yellow");
             $id_counter = 1;
@@ -76,6 +78,12 @@ class Game implements JsonSerializable
         }
     }
 
+    function gameWon(string $color)
+    {
+        $this->winner = $color;
+        $this->status = 2;
+    }
+
     function jsonSerialize()
     {
         return array(
@@ -83,7 +91,8 @@ class Game implements JsonSerializable
             "status" => $this->status,
             "players" => $this->players,
             "pawns" => $this->pawns,
-            "roll" => $this->roll
+            "roll" => $this->roll,
+            "winner" => $this->winner
         );
     }
 }

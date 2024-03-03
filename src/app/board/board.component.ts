@@ -70,7 +70,8 @@ export class BoardComponent {
 				color,
 				visible: tiles.includes(i),
 				pawn: "none",
-				highlighted: false
+				highlighted: false,
+				proposition: false
 			});
 		}
 	}
@@ -92,13 +93,34 @@ export class BoardComponent {
 		});
 	}
 
+	private highlightTile(tile: number) {
+		this.tempList[tile].proposition = true;
+	}
+
+	private hideHighlightedTile() {
+		this.tempList.forEach((tile: Tile) => {
+			tile.proposition = false;
+		});
+	}
+
 	private subscribeToBoardService() {
-		this.boardService.pawnTiles$.subscribe((pawns) => {
-			this.pawns = pawns;
-			console.log(pawns);
+		this.boardService.pawnTiles$.subscribe((pawns: Array<Pawn>) => {
+			if (this.boardService.getCanMove()) {
+				this.pawns = pawns;
+			} else {
+				this.pawns = pawns.map((pawn: Pawn) => { pawn.highlited = false; return pawn })
+			}
 
 			this.generateBoard();
 			this.placePawns();
-		})
+		});
+
+		this.boardService.highlightTile$.subscribe((tileId: number) => {
+			if (tileId > 0) {
+				this.highlightTile(tileId);
+			} else {
+				this.hideHighlightedTile();
+			}
+		});
 	}
 }

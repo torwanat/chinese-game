@@ -16,6 +16,7 @@ export class LobbyComponent {
 	public gameStarted: boolean = false;
 	public players: Array<Player> = [];
 	public ready: boolean = false;
+	public winner: string = "";
 
 	constructor(private gameService: GameService) {
 		this.subscribeToGameService();
@@ -24,6 +25,10 @@ export class LobbyComponent {
 	private subscribeToGameService() {
 		this.gameService.gameStarted$.subscribe((gameStarted) => {
 			this.gameStarted = gameStarted;
+		});
+
+		this.gameService.winner$.subscribe((winner: string) => {
+			this.winner = winner;
 		});
 
 		this.gameService.players$.subscribe((players) => {

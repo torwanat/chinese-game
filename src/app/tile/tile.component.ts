@@ -15,6 +15,7 @@ export class TileComponent {
 	@Input() color = "";
 	@Input() pawn = "none";
 	@Input() highlighted = false;
+	@Input() proposition = false;
 
 	constructor(private boardService: BoardService) {
 
@@ -23,6 +24,18 @@ export class TileComponent {
 	public move() {
 		if (this.pawn != "none") {
 			this.boardService.movePawn(this.id, this.pawn, false);
+		}
+	}
+
+	public showMoveOption() {
+		if (this.highlighted) {
+			this.boardService.highlightMoveOption(this.id, this.pawn);
+		}
+	}
+
+	public hideMoveOption() {
+		if (this.highlighted) {
+			this.boardService.hideMoveOption();
 		}
 	}
 }

@@ -13,6 +13,9 @@ export class BoardService {
 	public pawnTiles$: Observable<Array<Pawn>>;
 	private pawnTilesSubject = new Subject<Array<Pawn>>();
 
+	public highlightTile$: Observable<number>;
+	private highlightTileSubject = new Subject<number>();
+
 	private pawns: Array<Pawn> = [
 		{ color: "red", moved: -1, id: 0, highlited: false },
 		{ color: "red", moved: -1, id: 1, highlited: false },
@@ -38,6 +41,7 @@ export class BoardService {
 
 	constructor(private gameService: GameService) {
 		this.pawnTiles$ = this.pawnTilesSubject.asObservable();
+		this.highlightTile$ = this.highlightTileSubject.asObservable();
 		this.playerColor = gameService.playerColor;
 		this.subscribeToGameService();
 	}
@@ -64,6 +68,10 @@ export class BoardService {
 
 	public getPawnsPositions() {
 		return this.pawns;
+	}
+
+	public getCanMove() {
+		return this.canMove;
 	}
 
 	private subscribeToGameService() {
@@ -186,7 +194,9 @@ export class BoardService {
 
 		if (collisionTileId != -1) {
 			for (const [_, finishTiles] of Object.entries(finishes)) {
-				if (finishTiles.includes(collisionTileId)) return false;
+				if (finishTiles.includes(collisionTileId)) {
+					return false;
+				}
 			}
 
 			for (let i = 0; i < tempPawns.length; i++) {
@@ -211,10 +221,72 @@ export class BoardService {
 		if (fake) {
 			return true;
 		} else {
+			if (this.checkForWin(tempPawns)) {
+				this.gameService.updateMade("WIN");
+			} else {
+				this.gameService.updateMade("MOVE", tempPawns);
+			}
 			this.pawns = JSON.parse(JSON.stringify(tempPawns)); //deep copy of literal-structures array
-			this.gameService.updateMade("MOVE", this.pawns);
 			this.pawnTilesSubject.next(this.pawns);
 			return true;
 		}
+	}
+
+	private checkForWin(pawns: Array<Pawn>) {
+		const pawnsOnFinishTiles: Array<number> = [0, 0, 0, 0];
+		pawns.forEach((pawn: Pawn, index: number) => {
+			if (pawn.moved > gamePath.length) {
+				pawnsOnFinishTiles[Math.floor(index / 4)] += 1;
+			}
+		});
+
+		if (pawnsOnFinishTiles.includes(4)) {
+			return true;
+		}
+		return false;
+	}
+
+	public highlightMoveOption(tileId: number, pawnColor: string) {
+		let toMove: number = -1;
+		if (gamePath.includes(tileId)) {
+			let moved: number = gamePath.indexOf(tileId) - offsets[pawnColor];
+			if (moved < 0) moved += gamePath.length;
+
+			if (moved + this.rollResult >= gamePath.length + finishes[pawnColor].length) {
+				toMove = gamePath.length + finishes[pawnColor].length - 1;
+			} else {
+				toMove = moved + this.rollResult;
+			}
+		} else {
+			let spawn = false;
+			for (const [_, spawnTiles] of Object.entries(spawns)) {
+				if (spawnTiles.includes(tileId)) {
+					spawn = true;
+					break;
+				}
+			}
+			if (spawn) {
+				toMove = 0;
+			} else {
+				const finishIndex = finishes[pawnColor].indexOf(tileId);
+
+				if (finishIndex + this.rollResult >= finishes[pawnColor].length) {
+					toMove = gamePath.length + finishes[pawnColor].length - 1;
+				} else {
+					toMove = finishIndex + gamePath.length + this.rollResult;
+				}
+			}
+		}
+		let highlightTileId: number = 0;
+		if (toMove >= gamePath.length) {
+			highlightTileId = finishes[pawnColor][toMove - gamePath.length];
+		} else {
+			highlightTileId = gamePath[(toMove + offsets[pawnColor]) % gamePath.length];
+		}
+		this.highlightTileSubject.next(highlightTileId);
+	}
+
+	public hideMoveOption() {
+		this.highlightTileSubject.next(-1);
 	}
 }

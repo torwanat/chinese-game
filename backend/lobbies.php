@@ -140,11 +140,18 @@ if (isset($post_data['type'])) { # ongoing game updated
         if (isset($post_data['roll'])) {
             $game->roll = $post_data['roll'];
         }
-        if ($type == "MOVE") {
-            $game->nextPlayerTurn($post_data['color']);
-        }
-        if ($type == "ROLL") {
-            $game->diceThrowMade($post_data['color']);
+        switch ($type) {
+            case "MOVE":
+                $game->nextPlayerTurn($post_data['color']);
+                break;
+            case "ROLL":
+                $game->diceThrowMade($post_data['color']);
+                break;
+            case "WIN":
+                $game->gameWon($post_data['color']);
+                break;
+            default:
+                break;
         }
     }
 
