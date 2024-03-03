@@ -20,3 +20,18 @@
 	height: 50%;
 	border: 3px solid white;
 }
+
+.highlighted {
+	opacity: 0;
+	animation: disappear 1s linear 0s infinite alternate;
+}
+
+@keyframes disappear {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}

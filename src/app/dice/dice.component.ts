@@ -30,7 +30,7 @@ export class DiceComponent {
 
 	roll() {
 		this.result = Math.floor(Math.random() * (6) + 1);
-		// this.result = 2;
+		// this.result = 6;
 		this.boardService.getRollResult(this.result);
 	}
 }

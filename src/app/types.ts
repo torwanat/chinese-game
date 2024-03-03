@@ -2,14 +2,15 @@ export type Tile = {
 	id: number,
 	color: string,
 	visible: boolean,
-	pawn: string
+	pawn: string,
+	highlighted: boolean
 }
 
 export type Pawn = {
 	moved: number,
 	color: string,
 	id: number,
-	highlited?: boolean
+	highlited: boolean
 }
 
 export type Player = {

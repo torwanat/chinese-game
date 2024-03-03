@@ -13,7 +13,24 @@ export class BoardService {
 	public pawnTiles$: Observable<Array<Pawn>>;
 	private pawnTilesSubject = new Subject<Array<Pawn>>();
 
-	private pawns: Array<Pawn> = [];
+	private pawns: Array<Pawn> = [
+		{ color: "red", moved: -1, id: 0, highlited: false },
+		{ color: "red", moved: -1, id: 1, highlited: false },
+		{ color: "red", moved: -1, id: 2, highlited: false },
+		{ color: "red", moved: -1, id: 3, highlited: false },
+		{ color: "blue", moved: -1, id: 4, highlited: false },
+		{ color: "blue", moved: -1, id: 5, highlited: false },
+		{ color: "blue", moved: -1, id: 6, highlited: false },
+		{ color: "blue", moved: -1, id: 7, highlited: false },
+		{ color: "green", moved: -1, id: 8, highlited: false },
+		{ color: "green", moved: -1, id: 9, highlited: false },
+		{ color: "green", moved: -1, id: 10, highlited: false },
+		{ color: "green", moved: -1, id: 11, highlited: false },
+		{ color: "yellow", moved: -1, id: 12, highlited: false },
+		{ color: "yellow", moved: -1, id: 13, highlited: false },
+		{ color: "yellow", moved: -1, id: 14, highlited: false },
+		{ color: "yellow", moved: -1, id: 15, highlited: false },
+	];
 
 	private rollResult: number = 0;
 	private playerColor: string = "";
@@ -28,9 +45,18 @@ export class BoardService {
 	public getRollResult(result: number) {
 		this.rollResult = result;
 
-		const pawnsToHighlight: Array<Pawn> = this.highlightOptions();
+		const pawnsToHighlight: Array<number> = this.highlightOptions();
+
 		if (pawnsToHighlight.length) {
-			this.gameService.updateMade("ROLL", undefined, result);
+			this.pawns.forEach((pawn: Pawn) => {
+				if (pawnsToHighlight.includes(pawn.id)) {
+					pawn.highlited = true;
+				} else {
+					pawn.highlited = false;
+				}
+			});
+
+			this.gameService.updateMade("ROLL", this.pawns, result);
 		} else {
 			this.gameService.updateMade("MOVE", undefined, result);
 		}
@@ -50,7 +76,7 @@ export class BoardService {
 	}
 
 	private highlightOptions() {
-		const pawnsToHighlight = this.pawns.filter((pawn: Pawn, index: number) => {
+		const pawnsToHighlightId = this.pawns.filter((pawn: Pawn, index: number) => {
 			if (pawn.color != this.playerColor) return false;
 			type ObjectKey = keyof typeof offsets;
 			const color: ObjectKey = pawn.color as ObjectKey;
@@ -63,14 +89,16 @@ export class BoardService {
 				tile = gamePath[(pawn.moved + offsets[color]) % gamePath.length];
 			}
 			return this.movePawn(tile, pawn.color, true);
-		});
-		return pawnsToHighlight;
+		}).map((pawn: Pawn) => { return pawn.id });
+		return pawnsToHighlightId;
 	}
 
 	public movePawn(tileId: number, pawnColor: string, fake: boolean) {
 		if (pawnColor != this.playerColor || (!this.canMove && !fake)) return false;
 
 		const tempPawns: Array<Pawn> = JSON.parse(JSON.stringify(this.pawns)); //deep copy of literal-structures array
+
+		tempPawns.forEach((pawn: Pawn) => { pawn.highlited = false }); //hide highlighting after move
 
 		if (gamePath.includes(tileId)) {
 			let moved: number = gamePath.indexOf(tileId) - offsets[pawnColor];
@@ -175,6 +203,7 @@ export class BoardService {
 				}
 				if (tileId == collisionTileId && pawn.color != currentPawnColor) {
 					pawn.moved = -1;
+					break;
 				}
 			};
 		}

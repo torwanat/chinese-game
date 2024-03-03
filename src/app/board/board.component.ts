@@ -69,7 +69,8 @@ export class BoardComponent {
 				id: i,
 				color,
 				visible: tiles.includes(i),
-				pawn: "none"
+				pawn: "none",
+				highlighted: false
 			});
 		}
 	}
@@ -87,12 +88,14 @@ export class BoardComponent {
 				tile = gamePath[(pawn.moved + offsets[color]) % gamePath.length];
 			}
 			this.tempList[tile].pawn = pawn.color;
+			this.tempList[tile].highlighted = pawn.highlited;
 		});
 	}
 
 	private subscribeToBoardService() {
 		this.boardService.pawnTiles$.subscribe((pawns) => {
 			this.pawns = pawns;
+			console.log(pawns);
 
 			this.generateBoard();
 			this.placePawns();

@@ -14,6 +14,7 @@ export class TileComponent {
 	@Input() visible = false;
 	@Input() color = "";
 	@Input() pawn = "none";
+	@Input() highlighted = false;
 
 	constructor(private boardService: BoardService) {
 
