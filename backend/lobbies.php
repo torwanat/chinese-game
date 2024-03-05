@@ -35,7 +35,8 @@ $post_data = json_decode(stream_get_contents($tempStream), true);
 
 $colors = array("red", "blue", "green", "yellow"); # all colors
 
-$games = getGames(); # games from database
+$DB_connection = new Config();
+$games = $DB_connection->getGames(); # games from database
 
 if ($post_data['nick'] == "") { # first request
     if (!isset($_SESSION['uid'])) { # no previous game, request new nick
@@ -81,7 +82,7 @@ if ($post_data['uid'] == "") { # second request, nick but no game
             if (count($game->players) == 4) {
                 $game->startGame();
             }
-            updateGame($game->uid, $game);
+            $DB_connection->updateGame($game->uid, $game);
             sendStatus("OK2", $nick, $color, $game); # exits
         }
     }
@@ -97,7 +98,7 @@ if ($post_data['uid'] == "") { # second request, nick but no game
     $_SESSION['color'] = $color;
     $_SESSION['uid'] = $game->uid;
 
-    addNewGame($game);
+    $DB_connection->addNewGame($game);
     sendStatus("OK3", $nick, $color, $game); # exits
 }
 
@@ -142,7 +143,7 @@ if (isset($post_data['type'])) { # ongoing game updated
         }
         switch ($type) {
             case "MOVE":
-                $game->nextPlayerTurn($post_data['color']);
+                $game->nextPlayerTurn();
                 break;
             case "ROLL":
                 $game->diceThrowMade($post_data['color']);
@@ -155,10 +156,15 @@ if (isset($post_data['type'])) { # ongoing game updated
         }
     }
 
-    updateGame($post_data['uid'], $game);
+    $DB_connection->updateGame($post_data['uid'], $game);
     sendStatus("OK4"); # exits
 } else {
-    sendStatus("OK5", $post_data['nick'], $post_data['color'], $game); # exits
+    if ($game->timestamp > 0 && time() - $game->timestamp >= 60) {
+        $game->nextPlayerTurn();
+        $DB_connection->updateGame($post_data['uid'], $game);
+        sendStatus("OK5", $post_data['nick'], $post_data['color'], $game); # exits
+    }
+    sendStatus(time() - $game->timestamp, $post_data['nick'], $post_data['color'], $game); # exits
 
     sendStatus("NO_NICK"); # error happened
 }

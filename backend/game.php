@@ -6,8 +6,9 @@ class Game implements JsonSerializable
     public $status = 0; # 0 - waiting, 1 - ongoing, 2 - ended
     public $players = array();
     public $pawns = array();
-    public $roll = 0;
+    public $roll = 6;
     public $winner = "";
+    public $timestamp = -1;
 
     function __construct(object $template = null)
     {
@@ -18,6 +19,7 @@ class Game implements JsonSerializable
             $this->pawns = $template->pawns;
             $this->roll = $template->roll;
             $this->winner = $template->winner;
+            $this->timestamp = $template->timestamp;
         } else {
             $colors = array("red", "blue", "green", "yellow");
             $id_counter = 1;
@@ -53,6 +55,7 @@ class Game implements JsonSerializable
                 $player->status = 2;
             }
         }
+        $this->timestamp = time();
     }
 
     function diceThrowMade(string $color)
@@ -66,14 +69,19 @@ class Game implements JsonSerializable
         }
     }
 
-    function nextPlayerTurn(string $color)
+    function nextPlayerTurn()
     {
         for ($i = 0; $i < count($this->players); $i++) {
             $player = $this->players[$i];
-            if ($player->color == $color) {
+            if ($player->status == 3 || $player->status == 4) {
                 $player->status = 2;
-                $this->players[($i + 1) % count($this->players)]->status = 3;
-                break;
+                $index = 0;
+                if ($i != count($this->players) - 1) {
+                    $index = $i + 1;
+                }
+                $this->players[$index]->status = 3;
+                $this->timestamp = time();
+                return;
             }
         }
     }
@@ -92,7 +100,8 @@ class Game implements JsonSerializable
             "players" => $this->players,
             "pawns" => $this->pawns,
             "roll" => $this->roll,
-            "winner" => $this->winner
+            "winner" => $this->winner,
+            "timestamp" => $this->timestamp
         );
     }
 }

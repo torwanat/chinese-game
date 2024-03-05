@@ -21,6 +21,9 @@ export class GameService {
 	public winner$: Observable<string>;
 	private winnerSubject = new Subject<string>();
 
+	public timestamp$: Observable<number>;
+	private timestampSubject = new Subject<number>();
+
 	public playerColor: string = "red";
 	public playerNick: string = "";
 	public playerStatus: number = 0;
@@ -30,7 +33,8 @@ export class GameService {
 		players: [],
 		pawns: [],
 		roll: 0,
-		winner: ""
+		winner: "",
+		timestamp: 0
 	}
 
 	constructor() {
@@ -39,6 +43,7 @@ export class GameService {
 		this.pawns$ = this.pawnsSubject.asObservable();
 		this.roll$ = this.rollSubject.asObservable();
 		this.winner$ = this.winnerSubject.asObservable();
+		this.timestamp$ = this.timestampSubject.asObservable();
 		this.startShortPolling();
 	}
 
@@ -69,6 +74,10 @@ export class GameService {
 		} else {
 			this.playerNick = data.nick;
 			this.playerColor = data.color;
+			try {
+				console.log(data.game.players[0].status, data.game.players[1].status);
+			} catch { }
+
 
 			if (JSON.stringify(data.game) != JSON.stringify(this.game)) {
 				for (let i = 0; i < data.game.players.length; i++) {
@@ -79,6 +88,7 @@ export class GameService {
 					}
 				}
 
+				this.timestampSubject.next(data.game.timestamp);
 				this.pawnsSubject.next(data.game.pawns);
 				this.playersSubject.next(data.game.players);
 				this.rollSubject.next(data.game.roll);

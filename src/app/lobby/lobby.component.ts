@@ -17,9 +17,20 @@ export class LobbyComponent {
 	public players: Array<Player> = [];
 	public ready: boolean = false;
 	public winner: string = "";
+	public timeLeft: number = -1;
+	private timestamp: number = -1;
 
 	constructor(private gameService: GameService) {
 		this.subscribeToGameService();
+		this.countTime();
+	}
+
+	private countTime() {
+		setInterval(() => {
+			if (this.timestamp > 0) {
+				this.timeLeft = Math.max(0, 60 - Math.round((Date.now() - (this.timestamp * 1000)) / 1000));
+			}
+		}, 500);
 	}
 
 	private subscribeToGameService() {
@@ -41,6 +52,10 @@ export class LobbyComponent {
 				});
 			}
 			this.players = tempPlayers;
+		});
+
+		this.gameService.timestamp$.subscribe((timestamp: number) => {
+			this.timestamp = timestamp;
 		});
 	}
 

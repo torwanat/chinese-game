@@ -1,7 +1,8 @@
 <div class="lobby">
 	<div *ngFor="let player of players" class="player-container"
 		[ngStyle]="{'background-color': player.status > 0 ? player.color : 'none'}">
-		{{player.nick}}
+		<p>{{player.nick}}</p>
+		<div *ngIf="player.status == 3 || player.status == 4" class="timer">{{timeLeft}}</div>
 	</div>
 </div>
 <div *ngIf="gameStarted; else controls">

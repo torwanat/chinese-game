@@ -11,8 +11,9 @@ import { Player } from '../types';
 	styleUrl: './dice.component.css'
 })
 export class DiceComponent {
-	public result: number = 0;
+	public result: number = 6;
 	public disabled: boolean = true;
+	public dice: string = "\u2680\u2681\u2682\u2683\u2684\u2685";
 
 	public constructor(private boardService: BoardService, private gameService: GameService) {
 		this.disabled = gameService.playerColor != "red";

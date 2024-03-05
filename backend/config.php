@@ -1,37 +1,45 @@
 <?php
-$databaseHost = 'localhost';
-$databaseUsername = 'root';
-$databasePassword = '';
-$databaseName = 'chinese';
 
-$connection = mysqli_connect($databaseHost, $databaseUsername, $databasePassword, $databaseName);
-
-function getGames()
+class Config
 {
-    $response = $GLOBALS['connection']->query("SELECT * FROM games;");
-    $result = array();
+    private $databaseHost = 'localhost';
+    private $databaseUsername = 'root';
+    private $databasePassword = '';
+    private $databaseName = 'chinese';
+    private $connection;
 
-    if ($response->num_rows > 0) {
-        while ($row = $response->fetch_assoc()) {
-            array_push($result, $row);
-        }
+    function __construct()
+    {
+        $this->connection = mysqli_connect($this->databaseHost, $this->databaseUsername, $this->databasePassword, $this->databaseName);
     }
 
-    return $result;
-}
+    function getGames()
+    {
+        $response = $this->connection->query("SELECT * FROM games;");
+        $result = array();
 
-function updateGame(string $uid, Game $game)
-{
-    $data = json_encode($game);
-    $query = $GLOBALS['connection']->prepare("UPDATE games SET data=? WHERE game_id=?;");
-    $query->bind_param("ss", $data, $uid);
-    $query->execute();
-}
+        if ($response->num_rows > 0) {
+            while ($row = $response->fetch_assoc()) {
+                array_push($result, $row);
+            }
+        }
 
-function addNewGame(Game $game)
-{
-    $data = json_encode($game);
-    $query = $GLOBALS['connection']->prepare("INSERT INTO games (game_id, data) VALUES (?,?);");
-    $query->bind_param("ss", $game->uid, $data);
-    $query->execute();
+        return $result;
+    }
+
+    function updateGame(string $uid, Game $game)
+    {
+        $data = json_encode($game);
+        $query = $this->connection->prepare("UPDATE games SET data=? WHERE game_id=?;");
+        $query->bind_param("ss", $data, $uid);
+        $query->execute();
+    }
+
+    function addNewGame(Game $game)
+    {
+        $data = json_encode($game);
+        $query = $this->connection->prepare("INSERT INTO games (game_id, data) VALUES (?,?);");
+        $query->bind_param("ss", $game->uid, $data);
+        $query->execute();
+    }
 }

@@ -35,7 +35,8 @@ export type Game = {
 	pawns: Array<Pawn>,
 	players: Array<Player>,
 	roll: number,
-	winner: string
+	winner: string,
+	timestamp: number
 }
 
 export type UpdateType = "STATUS" | "MOVE" | "ROLL" | "WIN";
