@@ -37,6 +37,8 @@ export class GameService {
 		timestamp: 0
 	}
 
+	public language: string = "pol";
+
 	constructor() {
 		this.gameStarted$ = this.gameStartedSubject.asObservable();
 		this.players$ = this.playersSubject.asObservable();
@@ -74,10 +76,6 @@ export class GameService {
 		} else {
 			this.playerNick = data.nick;
 			this.playerColor = data.color;
-			try {
-				console.log(data.game.players[0].status, data.game.players[1].status);
-			} catch { }
-
 
 			if (JSON.stringify(data.game) != JSON.stringify(this.game)) {
 				for (let i = 0; i < data.game.players.length; i++) {
@@ -120,5 +118,9 @@ export class GameService {
 	private async startShortPolling() {
 		await this.sendRequest();
 		setInterval(() => this.sendRequest(this.playerNick, this.playerColor, this.game.uid), 3000);
+	}
+
+	public changeLanguage(language: string) {
+		this.language = language;
 	}
 }

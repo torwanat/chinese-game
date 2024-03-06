@@ -5,6 +5,7 @@
 		<div *ngIf="player.status == 3 || player.status == 4" class="timer">{{timeLeft}}</div>
 	</div>
 </div>
+<app-language></app-language>
 <div *ngIf="gameStarted; else controls">
 	<app-dice></app-dice>
 	<app-board></app-board>
@@ -13,7 +14,7 @@
 	<div *ngIf="winner; else ready_button">
 		<h1>{{winner}} won!</h1>
 	</div>
-	<ng-template #ready_button>
+	<ng-template #ready_button class="ready-container">
 		<button (click)="toggleReady()">{{ready? "Not ready!" : "Ready!"}}</button>
 	</ng-template>
 </ng-template>

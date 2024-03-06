@@ -15,9 +15,12 @@ export class DiceComponent {
 	public disabled: boolean = true;
 	public dice: string = "\u2680\u2681\u2682\u2683\u2684\u2685";
 
+	private voices: Array<SpeechSynthesisVoice> = [];
+
 	public constructor(private boardService: BoardService, private gameService: GameService) {
 		this.disabled = gameService.playerColor != "red";
 		this.subscribeToGameService();
+		this.populateVoiceList();
 	}
 
 	private subscribeToGameService() {
@@ -29,9 +32,23 @@ export class DiceComponent {
 		});
 	}
 
-	roll() {
+	public roll() {
 		this.result = Math.floor(Math.random() * (6) + 1);
+		this.speak(this.gameService.language);
 		// this.result = 6;
 		this.boardService.getRollResult(this.result);
+	}
+
+	private populateVoiceList() {
+		const synth = window.speechSynthesis;
+		this.voices = synth.getVoices();
+	}
+
+	private speak(language: string) {
+		const utterance = new SpeechSynthesisUtterance(this.result.toString());
+		utterance.voice = this.voices[language == "pol" ? 1 : 3];
+		utterance.pitch = 1;
+		utterance.rate = 1;
+		speechSynthesis.speak(utterance);
 	}
 }

@@ -4,11 +4,12 @@ import { DiceComponent } from '../dice/dice.component';
 import { GameService } from '../game.service';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { Player } from '../types';
+import { LanguageComponent } from '../language/language.component';
 
 @Component({
 	selector: 'app-lobby',
 	standalone: true,
-	imports: [BoardComponent, DiceComponent, CommonModule],
+	imports: [BoardComponent, DiceComponent, LanguageComponent, CommonModule],
 	templateUrl: './lobby.component.html',
 	styleUrl: './lobby.component.css'
 })
