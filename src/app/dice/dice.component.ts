@@ -45,8 +45,15 @@ export class DiceComponent {
 	}
 
 	private speak(language: string) {
+		let voice: SpeechSynthesisVoice = this.voices[0];
+		for (let i: number = 0; i < this.voices.length; i++) {
+			if (this.voices[i].lang.includes(language)) {
+				voice = this.voices[i];
+				break;
+			}
+		}
 		const utterance = new SpeechSynthesisUtterance(this.result.toString());
-		utterance.voice = this.voices[language == "pol" ? 1 : 3];
+		utterance.voice = voice;
 		utterance.pitch = 1;
 		utterance.rate = 1;
 		speechSynthesis.speak(utterance);
