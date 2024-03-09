@@ -14,7 +14,7 @@ export const spawns: { [key: string]: Array<number> } = {
 	yellow: [99, 100, 110, 111],
 }
 
-export const starts: { [ley: string]: number } = {
+export const starts: { [key: string]: number } = {
 	red: 44,
 	blue: 6,
 	green: 76,
