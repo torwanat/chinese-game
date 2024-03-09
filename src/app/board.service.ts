@@ -46,10 +46,10 @@ export class BoardService {
 		this.subscribeToGameService();
 	}
 
-	public getRollResult(result: number) {
+	public async getRollResult(result: number) {
 		this.rollResult = result;
 
-		const pawnsToHighlight: Array<number> = this.highlightOptions();
+		const pawnsToHighlight: Array<number> = await this.highlightOptions();
 
 		if (pawnsToHighlight.length) {
 			this.pawns.forEach((pawn: Pawn) => {
@@ -83,9 +83,10 @@ export class BoardService {
 		});
 	}
 
-	private highlightOptions() {
-		const pawnsToHighlightId = this.pawns.filter((pawn: Pawn, index: number) => {
-			if (pawn.color != this.playerColor) return false;
+	private async highlightOptions() {
+		const pawnsToHighlightIds: Array<number> = [];
+		for (const [index, pawn] of this.pawns.entries()) {
+			if (pawn.color != this.playerColor) continue;
 			type ObjectKey = keyof typeof offsets;
 			const color: ObjectKey = pawn.color as ObjectKey;
 			let tile: number = 0;
@@ -96,154 +97,46 @@ export class BoardService {
 			} else {
 				tile = gamePath[(pawn.moved + offsets[color]) % gamePath.length];
 			}
-			return this.movePawn(tile, pawn.color, true);
-		}).map((pawn: Pawn) => { return pawn.id });
-		return pawnsToHighlightId;
-	}
 
-	public movePawn(tileId: number, pawnColor: string, fake: boolean) {
-		if (pawnColor != this.playerColor || (!this.canMove && !fake)) return false;
-
-		const tempPawns: Array<Pawn> = JSON.parse(JSON.stringify(this.pawns)); //deep copy of literal-structures array
-
-		tempPawns.forEach((pawn: Pawn) => { pawn.highlited = false }); //hide highlighting after move
-
-		if (gamePath.includes(tileId)) {
-			let moved: number = gamePath.indexOf(tileId) - offsets[pawnColor];
-			if (moved < 0) moved += gamePath.length;
-
-			let alreadyMoved = false;
-			tempPawns.forEach(pawn => {
-				if (pawn.moved == moved && pawn.color == pawnColor && !alreadyMoved) {
-					if (moved + this.rollResult >= gamePath.length + finishes[pawn.color].length) {
-						pawn.moved = gamePath.length + finishes[pawnColor].length - 1;
-					} else {
-						pawn.moved += this.rollResult;
-					}
-					alreadyMoved = true;
-				}
-			});
-		} else {
-			let spawn = false;
-			for (const [_, spawnTiles] of Object.entries(spawns)) {
-				if (spawnTiles.includes(tileId)) {
-					spawn = true;
-					break;
-				}
-			}
-			if (spawn) {
-
-				if (this.rollResult != 6 && this.rollResult != 1) {
-					return false;
-				}
-
-
-				const spawnIndex: number = spawns[pawnColor].indexOf(tileId);
-
-				for (let i = 0; i < tempPawns.length; i++) {
-					const pawn: Pawn = tempPawns[i];
-					if (pawn.moved == -1 && pawn.color == pawnColor && i % 4 == spawnIndex) {
-						pawn.moved = 0;
-						break;
-					}
-				}
-			} else {
-				const finishIndex = finishes[pawnColor].indexOf(tileId);
-
-				tempPawns.forEach(pawn => {
-					if (pawn.moved - gamePath.length == finishIndex && pawn.color == pawnColor) {
-						if (finishIndex + this.rollResult >= finishes[pawnColor].length) {
-							pawn.moved = gamePath.length + finishes[pawnColor].length - 1;
-						} else {
-							pawn.moved += this.rollResult;
-						}
-					}
-				});
+			const highlight = await this.makeMove(pawn.color, tile, true);
+			if (highlight) {
+				pawnsToHighlightIds.push(pawn.id);
 			}
 		}
-
-		return this.checkForCollision(pawnColor, tempPawns, fake);
+		return pawnsToHighlightIds;
 	}
 
-	private checkForCollision(currentPawnColor: string, tempPawns: Array<Pawn>, fake: boolean) {
-		const tiles: Array<{ color: string, id: number }> = [];
-		let collisionTileId: number = -1;
-
-		for (let i = 0; i < tempPawns.length; i++) {
-			const pawn = tempPawns[i];
-			type ObjectKey = keyof typeof offsets;
-			const color: ObjectKey = pawn.color as ObjectKey;
-			let tileId: number = 0;
-			if (pawn.moved >= gamePath.length) {
-				tileId = finishes[color][pawn.moved - gamePath.length];
-			} else if (pawn.moved < 0) {
-				tileId = spawns[color][i % 4];
-			} else {
-				tileId = gamePath[(pawn.moved + offsets[color]) % gamePath.length];
-			}
-			for (let i = 0; i < tiles.length; i++) {
-				const tile = tiles[i];
-				if (tile.id == tileId && tile.color != color) {
-					collisionTileId = tileId;
-					break;
-				}
-			}
-			tiles.push({ color: color.toString(), id: tileId });
-
-		};
-
-		if (collisionTileId != -1) {
-			for (const [_, finishTiles] of Object.entries(finishes)) {
-				if (finishTiles.includes(collisionTileId)) {
-					return false;
-				}
-			}
-
-			for (let i = 0; i < tempPawns.length; i++) {
-				const pawn = tempPawns[i];
-				type ObjectKey = keyof typeof offsets;
-				const color: ObjectKey = pawn.color as ObjectKey;
-				let tileId: number = 0;
-				if (pawn.moved >= gamePath.length) {
-					tileId = finishes[color][pawn.moved - gamePath.length];
-				} else if (pawn.moved < 0) {
-					tileId = spawns[color][i % 4];
-				} else {
-					tileId = gamePath[(pawn.moved + offsets[color]) % gamePath.length];
-				}
-				if (tileId == collisionTileId && pawn.color != currentPawnColor) {
-					pawn.moved = -1;
-					break;
-				}
-			};
-		}
-
-		if (fake) {
-			return true;
-		} else {
-			if (this.checkForWin(tempPawns)) {
-				this.gameService.updateMade("WIN");
-			} else {
-				this.gameService.updateMade("MOVE", tempPawns);
-			}
-			this.pawns = JSON.parse(JSON.stringify(tempPawns)); //deep copy of literal-structures array
-			this.pawnTilesSubject.next(this.pawns);
-			return true;
-		}
+	public movePawn(tileId: number, pawnColor: string) {
+		if (pawnColor != this.playerColor || !this.canMove) return;
+		this.makeMove(pawnColor, tileId, false);
 	}
 
-	private checkForWin(pawns: Array<Pawn>) {
-		const pawnsOnFinishTiles: Array<number> = [0, 0, 0, 0];
-		pawns.forEach((pawn: Pawn, index: number) => {
-			if (pawn.moved > gamePath.length) {
-				pawnsOnFinishTiles[Math.floor(index / 4)] += 1;
+	private async makeMove(pawnColor: string, tileId: number, fake: boolean) {
+		const body = JSON.stringify({
+			playerColor: this.playerColor,
+			pawns: this.pawns,
+			pawnColor,
+			tileId,
+			rollResult: this.rollResult
+		});
+		const response: Response = await fetch("http://localhost/chinese/move.php", {
+			method: "POST", body, headers: {
+				"Content-Type": "application/json"
 			}
 		});
+		const data = await response.json();
 
-		if (pawnsOnFinishTiles.includes(4)) {
-			return true;
+		if (fake) {
+			return !(data.status == "NO");
 		}
-		return false;
+		if (data.status == "WIN") {
+			this.gameService.updateMade("WIN");
+		} else if (data.status == "MOVE") {
+			this.gameService.updateMade("MOVE", data.pawns);
+			this.pawns = data.pawns;
+			this.pawnTilesSubject.next(this.pawns);
+		}
+		return true;
 	}
 
 	public highlightMoveOption(tileId: number, pawnColor: string) {
