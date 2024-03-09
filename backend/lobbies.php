@@ -39,30 +39,6 @@ $DB_connection = new Config();
 $games = $DB_connection->getGames(); # games from database
 
 if ($post_data['nick'] == "") { # first request
-    if (!isset($_SESSION['uid'])) { # no previous game, request new nick
-        sendStatus("NO_NICK"); # exits
-    }
-    # session found, check if previous game is active
-    $uid = $_SESSION['uid'];
-    $color = $_SESSION['color'];
-    $nick = $_SESSION['nick'];
-
-    foreach ($games as $row) {
-        if ($row['game_id'] == $uid) { # found previous game
-            $data = json_decode($row['data']);
-            $game = new Game($data);
-            if ($game->status == 2) { # previous game ended, stop searching
-                // session_unset();
-                break;
-            }
-
-            # previous game active, use previous nick
-            sendStatus("OK1", $nick, $color, $game); # exits
-        }
-    }
-
-    # previous game not active, request new nick
-    // session_unset();
     sendStatus("NO_NICK"); # exits
 }
 
@@ -164,7 +140,7 @@ if (isset($post_data['type'])) { # ongoing game updated
         $DB_connection->updateGame($post_data['uid'], $game);
         sendStatus("OK5", $post_data['nick'], $post_data['color'], $game); # exits
     }
-    sendStatus(time() - $game->timestamp, $post_data['nick'], $post_data['color'], $game); # exits
+    sendStatus("OK6", $post_data['nick'], $post_data['color'], $game); # exits
 
     sendStatus("NO_NICK"); # error happened
 }

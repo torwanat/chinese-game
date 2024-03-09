@@ -1,5 +1,5 @@
 <div [ngClass]="{'hidden': !visible, 'tile': true, 'proposition': proposition}" [ngStyle]="{'background-color': color}">
 	<div (click)="move()" (mouseover)="showMoveOption()" (mouseout)="hideMoveOption()"
-		[ngClass]="{'pawn': pawn != 'none', 'highlighted': highlighted}" [ngStyle]="{'background-color': pawn}">{{id}}
+		[ngClass]="{'pawn': pawn != 'none', 'highlighted': highlighted}" [ngStyle]="{'background-color': pawn}">
 	</div>
 </div>

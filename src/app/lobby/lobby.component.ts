@@ -57,6 +57,7 @@ export class LobbyComponent {
 			this.players = tempPlayers;
 
 			this.playerNick = this.gameService.playerNick;
+			this.ready = this.gameService.playerStatus > 0;
 		});
 
 		this.gameService.timestamp$.subscribe((timestamp: number) => {

@@ -81,6 +81,10 @@ export class BoardService {
 			this.pawns = pawns;
 			this.pawnTilesSubject.next(this.pawns);
 		});
+
+		this.gameService.roll$.subscribe((roll) => {
+			this.rollResult = roll;
+		})
 	}
 
 	private async highlightOptions() {

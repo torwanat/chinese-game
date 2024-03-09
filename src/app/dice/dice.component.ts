@@ -30,12 +30,13 @@ export class DiceComponent {
 		this.gameService.players$.subscribe((players: Array<Player>) => {
 			this.disabled = this.gameService.playerStatus != 3;
 		});
+
+		this.disabled = this.gameService.playerStatus != 3;
 	}
 
 	public roll() {
 		this.result = Math.floor(Math.random() * (6) + 1);
 		this.speak(this.gameService.language);
-		// this.result = 6;
 		this.boardService.getRollResult(this.result);
 	}
 

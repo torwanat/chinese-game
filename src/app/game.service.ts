@@ -49,14 +49,6 @@ export class GameService {
 		this.startShortPolling();
 	}
 
-	private getNick() {
-		let nick: string | null = "";
-		while (nick == "") {
-			nick = prompt("Podaj nick:");
-		}
-		return nick;
-	}
-
 	private async sendRequest(nick: string = "", color: string = "", uid: string = "") {
 		const body = JSON.stringify({
 			nick,
@@ -73,7 +65,11 @@ export class GameService {
 		if (data.status != "NO_NICK") {
 			this.playerNick = data.nick;
 			this.playerColor = data.color;
-			console.log(data.game.players);
+			localStorage.setItem("session", JSON.stringify({
+				uid: data.game.uid,
+				nick: this.playerNick,
+				color: this.playerColor
+			}));
 
 			for (let i = 0; i < data.game.players.length; i++) {
 				const player: Player = data.game.players[i];
@@ -112,7 +108,15 @@ export class GameService {
 	}
 
 	private async startShortPolling() {
-		await this.sendRequest();
+		let previousSession: { [key: string]: string } = {
+			nick: "",
+			color: "",
+			uid: ""
+		};
+		if (localStorage.getItem("session")) {
+			previousSession = JSON.parse(localStorage.getItem("session")!.toString());
+		}
+		await this.sendRequest(previousSession['nick'], previousSession['color'], previousSession['uid']);
 		setInterval(() => this.sendRequest(this.playerNick, this.playerColor, this.game.uid), 3000);
 	}
 
