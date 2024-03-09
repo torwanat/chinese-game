@@ -1,20 +1,25 @@
-<div class="lobby">
-	<div *ngFor="let player of players" class="player-container"
-		[ngStyle]="{'background-color': player.status > 0 ? player.color : 'none'}">
-		<p>{{player.nick}}</p>
-		<div *ngIf="player.status == 3 || player.status == 4" class="timer">{{timeLeft}}</div>
-	</div>
+<div *ngIf="playerNick == ''; else lobby">
+	<app-login></app-login>
 </div>
-<app-language></app-language>
-<div *ngIf="gameStarted; else controls">
-	<app-dice></app-dice>
-	<app-board></app-board>
-</div>
-<ng-template #controls>
-	<div *ngIf="winner; else ready_button">
-		<h1>{{winner}} won!</h1>
+<ng-template #lobby>
+	<div class="lobby">
+		<div *ngFor="let player of players" class="player-container"
+			[ngStyle]="{'background-color': player.status > 0 ? player.color : 'none'}">
+			<p>{{player.nick}}</p>
+			<div *ngIf="player.status == 3 || player.status == 4" class="timer">{{timeLeft}}</div>
+		</div>
 	</div>
-	<ng-template #ready_button class="ready-container">
-		<button (click)="toggleReady()">{{ready? "Not ready!" : "Ready!"}}</button>
+	<app-language></app-language>
+	<div *ngIf="gameStarted; else controls">
+		<app-dice></app-dice>
+		<app-board></app-board>
+	</div>
+	<ng-template #controls>
+		<div *ngIf="winner; else ready_button">
+			<h1>{{winner}} won!</h1>
+		</div>
+		<ng-template #ready_button class="ready-container">
+			<button (click)="toggleReady()">{{ready? "Not ready!" : "Ready!"}}</button>
+		</ng-template>
 	</ng-template>
 </ng-template>

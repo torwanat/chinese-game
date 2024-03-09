@@ -5,11 +5,12 @@ import { GameService } from '../game.service';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { Player } from '../types';
 import { LanguageComponent } from '../language/language.component';
+import { LoginComponent } from '../login/login.component';
 
 @Component({
 	selector: 'app-lobby',
 	standalone: true,
-	imports: [BoardComponent, DiceComponent, LanguageComponent, CommonModule],
+	imports: [BoardComponent, DiceComponent, LanguageComponent, CommonModule, LoginComponent],
 	templateUrl: './lobby.component.html',
 	styleUrl: './lobby.component.css'
 })
@@ -19,6 +20,7 @@ export class LobbyComponent {
 	public ready: boolean = false;
 	public winner: string = "";
 	public timeLeft: number = -1;
+	public playerNick: string = "";
 	private timestamp: number = -1;
 
 	constructor(private gameService: GameService) {
@@ -53,6 +55,8 @@ export class LobbyComponent {
 				});
 			}
 			this.players = tempPlayers;
+
+			this.playerNick = this.gameService.playerNick;
 		});
 
 		this.gameService.timestamp$.subscribe((timestamp: number) => {

@@ -70,30 +70,26 @@ export class GameService {
 		});
 		const data = await response.json();
 
-		if (data.status == "NO_NICK") {
-			const playerNick: string | null = this.getNick();
-			this.sendRequest(playerNick!);
-		} else {
+		if (data.status != "NO_NICK") {
 			this.playerNick = data.nick;
 			this.playerColor = data.color;
+			console.log(data.game.players);
 
-			if (JSON.stringify(data.game) != JSON.stringify(this.game)) {
-				for (let i = 0; i < data.game.players.length; i++) {
-					const player: Player = data.game.players[i];
-					if (player.color == this.playerColor) {
-						this.playerStatus = player.status;
-						break;
-					}
+			for (let i = 0; i < data.game.players.length; i++) {
+				const player: Player = data.game.players[i];
+				if (player.color == this.playerColor) {
+					this.playerStatus = player.status;
+					break;
 				}
-
-				this.timestampSubject.next(data.game.timestamp);
-				this.pawnsSubject.next(data.game.pawns);
-				this.playersSubject.next(data.game.players);
-				this.rollSubject.next(data.game.roll);
-				this.gameStartedSubject.next(data.game.status == 1);
-				this.winnerSubject.next(data.game.winner);
-				this.game = data.game;
 			}
+
+			this.timestampSubject.next(data.game.timestamp);
+			this.pawnsSubject.next(data.game.pawns);
+			this.playersSubject.next(data.game.players);
+			this.rollSubject.next(data.game.roll);
+			this.gameStartedSubject.next(data.game.status == 1);
+			this.winnerSubject.next(data.game.winner);
+			this.game = data.game;
 		}
 	}
 
