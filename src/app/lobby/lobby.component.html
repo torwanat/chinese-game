@@ -16,10 +16,10 @@
 	</div>
 	<ng-template #controls>
 		<div *ngIf="winner; else ready_button">
-			<h1>{{winner}} won!</h1>
+			<h1>{{winner}} {{wonText}}!</h1>
 		</div>
 		<ng-template #ready_button class="ready-container">
-			<button (click)="toggleReady()">{{ready? "Not ready!" : "Ready!"}}</button>
+			<button (click)="toggleReady()">{{ready? notReadyText : readyText}}</button>
 		</ng-template>
 	</ng-template>
 </ng-template>

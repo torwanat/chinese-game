@@ -1,7 +1,7 @@
 <div class="language-container">
-	<label for="language-select">Wybierz język: </label>
+	<label for="language-select">{{chooseLanguageText}}</label>
 	<select name="language-select" id="language-select" #languages (change)="languageChanged(languages.value)">
-		<option value="pl">Polski</option>
-		<option value="en">Angielski</option>
+		<option value="pl_PL">{{polish}}</option>
+		<option value="en_US">{{english}}</option>
 	</select>
 </div>

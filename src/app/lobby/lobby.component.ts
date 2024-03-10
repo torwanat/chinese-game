@@ -6,6 +6,7 @@ import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { Player } from '../types';
 import { LanguageComponent } from '../language/language.component';
 import { LoginComponent } from '../login/login.component';
+import { getTranslation } from '../translate';
 
 @Component({
 	selector: 'app-lobby',
@@ -21,11 +22,29 @@ export class LobbyComponent {
 	public winner: string = "";
 	public timeLeft: number = -1;
 	public playerNick: string = "";
+	public readyText: string = "Ready!";
+	public notReadyText: string = "Not ready!";
+	public wonText: string = "won";
 	private timestamp: number = -1;
 
 	constructor(private gameService: GameService) {
 		this.subscribeToGameService();
 		this.countTime();
+		this.translate();
+	}
+
+	private async translate() {
+		this.readyText = await getTranslation(this.readyText, this.gameService.language);
+		this.notReadyText = await getTranslation(this.notReadyText, this.gameService.language);
+		this.wonText = await getTranslation(this.wonText, this.gameService.language);
+
+		this.gameService.language$.subscribe(async (language: string) => {
+			console.log(language);
+
+			this.readyText = await getTranslation(this.readyText, language);
+			this.notReadyText = await getTranslation(this.notReadyText, language);
+			this.wonText = await getTranslation(this.wonText, language);
+		});
 	}
 
 	private countTime() {

@@ -25,6 +25,9 @@ export class GameService {
 	public timestamp$: Observable<number>;
 	private timestampSubject = new Subject<number>();
 
+	public language$: Observable<string>;
+	private languageSubject = new Subject<string>();
+
 	public playerColor: string = "red";
 	public playerNick: string = "";
 	public playerStatus: number = 0;
@@ -38,7 +41,7 @@ export class GameService {
 		timestamp: 0
 	}
 
-	public language: string = "pol";
+	public language: string = "en_US";
 
 	constructor() {
 		this.gameStarted$ = this.gameStartedSubject.asObservable();
@@ -47,6 +50,7 @@ export class GameService {
 		this.roll$ = this.rollSubject.asObservable();
 		this.winner$ = this.winnerSubject.asObservable();
 		this.timestamp$ = this.timestampSubject.asObservable();
+		this.language$ = this.languageSubject.asObservable();
 		this.startShortPolling();
 	}
 
@@ -129,5 +133,6 @@ export class GameService {
 
 	public changeLanguage(language: string) {
 		this.language = language;
+		this.languageSubject.next(this.language);
 	}
 }

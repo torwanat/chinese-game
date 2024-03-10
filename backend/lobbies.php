@@ -2,10 +2,7 @@
 require "config.php";
 require "player.php";
 require "game.php";
-
-header("Access-Control-Allow-Origin: http://localhost:4200");
-header("Access-Control-Allow-Headers: Content-Type");
-
+require "headers.php";
 
 function sendStatus(string $status, string $nick = "", string $color = "", object $game = null)
 {

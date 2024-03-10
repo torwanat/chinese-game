@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { BoardService } from '../board.service';
 import { GameService } from '../game.service';
 import { Player } from '../types';
+import { apiPrefix } from '../apiPrefix';
+import { getTranslation } from '../translate';
 
 @Component({
 	selector: 'app-dice',
@@ -14,6 +16,7 @@ export class DiceComponent {
 	public result: number = 6;
 	public disabled: boolean = true;
 	public dice: string = "\u2680\u2681\u2682\u2683\u2684\u2685";
+	public rollText: string = "Roll";
 
 	private voices: Array<SpeechSynthesisVoice> = [];
 
@@ -21,6 +24,15 @@ export class DiceComponent {
 		this.disabled = gameService.playerColor != "red";
 		this.subscribeToGameService();
 		this.populateVoiceList();
+		this.translate();
+	}
+
+	private async translate() {
+		this.rollText = await getTranslation(this.rollText, this.gameService.language);
+
+		this.gameService.language$.subscribe(async (language: string) => {
+			this.rollText = await getTranslation(this.rollText, language);
+		});
 	}
 
 	private subscribeToGameService() {
@@ -47,6 +59,8 @@ export class DiceComponent {
 
 	private speak(language: string) {
 		let voice: SpeechSynthesisVoice = this.voices[0];
+		console.log(this.voices);
+
 		for (let i: number = 0; i < this.voices.length; i++) {
 			if (this.voices[i].lang.includes(language)) {
 				voice = this.voices[i];

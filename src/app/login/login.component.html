@@ -1,5 +1,5 @@
 <div class="login-container">
 	<label for="loginInput">Nick: </label>
 	<input type="text" name="loginInput" id="loginInput" (keyup)="updateNick(loginform.value)" #loginform>
-	<button [disabled]="nick == ''" (click)="login()">Join</button>
+	<button [disabled]="nick == ''" (click)="login()">{{joinText}}</button>
 </div>
