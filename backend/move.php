@@ -110,7 +110,7 @@ foreach ($pawns as $index => $pawn) {
 				break 2;
 			}
 			foreach ($finishes as $index => $finish_tiles) {
-				if (in_array($collision_tile, $finish_tiles)) {
+				if (in_array($temp_tile, $finish_tiles)) {
 					sendResult("NO", $pawns);
 				}
 			}
@@ -144,7 +144,7 @@ if ($collision_tile != -1) {
 #check for win
 $pawns_finished = [0, 0, 0, 0];
 foreach ($pawns as $index => $pawn) {
-	if ($pawn['moved'] > count($game_path)) {
+	if ($pawn['moved'] >= count($game_path)) {
 		$pawns_finished[floor($index / 4)] += 1;
 	}
 }
