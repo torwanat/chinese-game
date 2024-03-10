@@ -4,6 +4,7 @@ import { Pawn } from './types';
 import { gamePath, offsets } from './gamePath';
 import { finishes, spawns } from './tileIDs';
 import { GameService } from './game.service';
+import { apiPrefix } from './apiPrefix';
 
 @Injectable({
 	providedIn: 'root'
@@ -123,7 +124,7 @@ export class BoardService {
 			tileId,
 			rollResult: this.rollResult
 		});
-		const response: Response = await fetch("http://localhost/chinese/move.php", {
+		const response: Response = await fetch(apiPrefix + "move.php", {
 			method: "POST", body, headers: {
 				"Content-Type": "application/json"
 			}

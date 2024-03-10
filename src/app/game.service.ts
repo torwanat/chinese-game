@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { Game, Pawn, Player, UpdateType } from './types';
+import { apiPrefix } from './apiPrefix';
 
 @Injectable({
 	providedIn: 'root'
@@ -49,13 +50,14 @@ export class GameService {
 		this.startShortPolling();
 	}
 
-	private async sendRequest(nick: string = "", color: string = "", uid: string = "") {
+	private async sendRequest(nick: string = "", color: string = "", uid: string = "", session: boolean = false) {
 		const body = JSON.stringify({
 			nick,
 			color,
-			uid
+			uid,
+			session
 		});
-		const response: Response = await fetch("http://localhost/chinese/lobbies.php", {
+		const response: Response = await fetch(apiPrefix + "lobbies.php", {
 			method: "POST", body, headers: {
 				"Content-Type": "application/json"
 			}
@@ -86,6 +88,10 @@ export class GameService {
 			this.gameStartedSubject.next(data.game.status == 1);
 			this.winnerSubject.next(data.game.winner);
 			this.game = data.game;
+		} else {
+			localStorage.clear();
+			this.playerNick = "";
+			this.playerColor = "";
 		}
 	}
 
@@ -96,9 +102,10 @@ export class GameService {
 			color: this.playerColor,
 			uid: this.game.uid,
 			pawns,
-			roll
+			roll,
+			session: false
 		});
-		const response = await fetch("http://localhost/chinese/lobbies.php", {
+		const response = await fetch(apiPrefix + "lobbies.php", {
 			method: "POST", body, headers: {
 				"Content-Type": "application/json"
 			}
@@ -116,7 +123,7 @@ export class GameService {
 		if (localStorage.getItem("session")) {
 			previousSession = JSON.parse(localStorage.getItem("session")!.toString());
 		}
-		await this.sendRequest(previousSession['nick'], previousSession['color'], previousSession['uid']);
+		await this.sendRequest(previousSession['nick'], previousSession['color'], previousSession['uid'], true);
 		setInterval(() => this.sendRequest(this.playerNick, this.playerColor, this.game.uid), 3000);
 	}
 
