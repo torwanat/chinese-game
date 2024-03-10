@@ -18,11 +18,10 @@ putenv("LANG=" . $language);
 setlocale(LC_ALL, $language);
 
 $domain = "messages";
+bindtextdomain($domain, "Locale/nocache");
 bindtextdomain($domain, "Locale");
 bind_textdomain_codeset($domain, "UTF-8");
 
 textdomain($domain);
-
-error_log($post_data['language']);
 
 echo json_encode(_($post_data['message']));

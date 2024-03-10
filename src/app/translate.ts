@@ -11,6 +11,5 @@ export const getTranslation = async (message: string, language: string) => {
 		}
 	});
 	const translation = await response.json();
-	console.log(translation);
 	return translation;
 }

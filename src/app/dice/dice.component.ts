@@ -59,7 +59,6 @@ export class DiceComponent {
 
 	private speak(language: string) {
 		let voice: SpeechSynthesisVoice = this.voices[0];
-		console.log(this.voices);
 
 		for (let i: number = 0; i < this.voices.length; i++) {
 			if (this.voices[i].lang.includes(language)) {

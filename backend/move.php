@@ -118,8 +118,6 @@ foreach ($pawns as $index => $pawn) {
     );
 }
 
-error_log(json_encode($tiles));
-
 if ($collision_tile != -1) {
     foreach ($finishes as $index => $finish_tiles) {
         if (in_array($collision_tile, $finish_tiles)) {
