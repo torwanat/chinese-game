@@ -1,120 +1,70 @@
-# Chinese Game
+# Running with Docker Compose
 
-A multiplayer board game application built with **Angular 17** and **PHP**, featuring real-time gameplay with internationalization support.
+This project is distributed as two custom Docker Hub images for the application layer and the official MySQL image for the database layer.
+The Docker Compose file should be kept in the source repository together with `.env.example`, initialization scripts, and usage instructions so that image tags and startup configuration stay in sync.
 
-## What the project does
+## Files included
 
-Chinese Game is a web-based multiplayer board game where up to 4 players compete to move their pawns around a board based on dice rolls. The game includes:
+- `docker-compose.yml` — starts the full stack: frontend, backend, and MySQL.
+- `.env.example` — template for required environment variables and secrets.
+- `docker/init.sql` — first-run database initialization script mounted into MySQL.
 
-- **Multiplayer lobby system** - Create and join game lobbies with other players
-- **Real-time game state management** - Live updates on player moves and game status
-- **Dice roll mechanics** - Randomized movement determination
-- **Multi-language support** - English and Polish localization built-in
-- **Player authentication** - Unique player identities in games
-- **Responsive board UI** - Interactive game board with visual feedback for playable moves
+## Prerequisites
 
-## Why the project is useful
+- Docker Engine with Docker Compose installed.
+- A Docker Hub account since the application images are private.
 
-This project demonstrates a complete full-stack game implementation with:
+## First-time setup
 
-- **Modern frontend architecture** - Angular 17 with standalone components and reactive programming
-- **Real-time synchronization** - PHP backend managing game state and player interactions
-- **Internationalization** - Multi-language support using gettext (PO/MO files)
-- **Type-safe development** - Full TypeScript implementation for the frontend
-- **Service-based architecture** - Decoupled game and board services for clean data flow
-- **Educational value** - Clear examples of component-based UI, API integration, and game logic
-
-## Getting started
-
-### Prerequisites
-
-- **Node.js** 18+ with npm
-- **PHP** 7.4+ (for backend server)
-- **Angular CLI** 17+ (optional, for development)
-
-### Installation
-
-1. **Clone the repository:**
+1. Copy the example environment file:
    ```bash
-   git clone <repository-url>
-   cd chinese-game
+   cp .env.example .env
+   ```
+2. Edit `.env` and set secure values for database credentials and the application version tag.
+3. Log in to Docker Hub:
+   ```bash
+   docker login
    ```
 
-2. **Install frontend dependencies:**
+## Start the stack
+
+Pull the published images and start all services:
+
+```bash
+docker compose pull
+docker compose up -d
+```
+
+This downloads the published frontend and backend images from Docker Hub and pulls `mysql:8.0` as the database image.
+
+## Stop the stack
+
+```bash
+docker compose down
+```
+
+This stops the containers but keeps the named MySQL volume, so database data persists across restarts unless volumes are explicitly removed.
+
+## Reset the database
+
+To remove the database volume and recreate MySQL from scratch:
+
+```bash
+docker compose down -v
+docker compose up -d
+```
+
+Initialization scripts in `/docker-entrypoint-initdb.d/` run only when the database is created for the first time with a fresh volume.
+
+## Updating to a new release
+
+1. Change `APP_VERSION` in `.env` to the new published version.
+2. Pull the updated images:
    ```bash
-   npm install
+   docker compose pull
+   ```
+3. Recreate the containers:
+   ```bash
+   docker compose up -d
    ```
 
-3. **Set up the backend server:**
-   - Configure your PHP server to serve the `backend/` directory
-   - Update the API endpoint in [src/app/apiPrefix.ts](src/app/apiPrefix.ts) if needed
-
-### Running the application
-
-**Development server:**
-```bash
-npm start
-```
-Navigate to `http://localhost:4200/`. The application automatically reloads when you modify source files.
-
-**Build for production:**
-```bash
-npm run build
-```
-Build artifacts are stored in the `dist/` directory.
-
-### Running tests
-
-**Unit tests:**
-```bash
-npm test
-```
-Tests are executed via [Karma](https://karma-runner.github.io) and [Jasmine](https://jasmine.github.io).
-
-## Project structure
-
-```
-src/
-├── app/
-│   ├── board/              # Board game display and interaction
-│   ├── dice/               # Dice roll component
-│   ├── game/               # Game service managing state and API calls
-│   ├── board.service.ts    # Board logic and pawn movement
-│   ├── game.service.ts     # Central game state management
-│   ├── types.ts            # TypeScript type definitions
-│   └── [other components]  # Login, Lobby, Language selection, Tile
-│
-└── assets/                 # Static assets
-
-backend/
-├── game.php                # Game logic and rules
-├── player.php              # Player management
-├── move.php                # Move validation and processing
-├── game_data.php           # Game state persistence
-└── Locale/                 # i18n translations (en_US, pl_PL)
-```
-
-## Usage example
-
-1. **Start the game:**
-   - Open the application and enter your player nickname
-   - Choose a color (Red, Blue, Green, or Yellow)
-   - Wait for other players to join the lobby
-
-2. **During gameplay:**
-   - When it's your turn, click the dice to roll
-   - Available tiles highlight based on your roll
-   - Select a highlighted tile to move your pawn
-   - Game continues until one player wins
-
-3. **Changing language:**
-   - Use the language selector to toggle between English and Polish
-   - Game interface and messages update in real-time
-
-## Technologies used
-
-- **Frontend:** Angular 17, TypeScript 5.3, RxJS 7.8
-- **Backend:** PHP 7.4+
-- **Localization:** gettext (PO/MO files)
-- **Testing:** Jasmine, Karma
-- **Build:** Angular CLI 17
