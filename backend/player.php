@@ -12,7 +12,7 @@ class Player implements JsonSerializable
         $this->color = $color;
     }
 
-    function jsonSerialize()
+    function jsonSerialize(): mixed
     {
         return array(
             "nick" => $this->nick,

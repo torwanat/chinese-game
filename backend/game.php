@@ -92,7 +92,7 @@ class Game implements JsonSerializable
         $this->status = 2;
     }
 
-    function jsonSerialize()
+    function jsonSerialize(): mixed
     {
         return array(
             "uid" => $this->uid,

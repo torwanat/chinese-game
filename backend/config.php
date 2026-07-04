@@ -2,14 +2,18 @@
 
 class Config
 {
-    private $databaseHost = 'localhost';
-    private $databaseUsername = 'root';
-    private $databasePassword = '';
-    private $databaseName = 'chinese';
+    private $databaseHost;
+    private $databaseUsername;
+    private $databasePassword;
+    private $databaseName;
     private $connection;
 
     function __construct()
     {
+        $databaseHost = getenv('DB_HOST') ?: 'db';
+        $databaseUsername = getenv('DB_USER') ?: 'chinese_user';
+        $databasePassword = getenv('DB_PASSWORD') ?: 'chinczyk';
+        $databaseName = getenv('DB_DATABASE') ?: 'chinese';
         $this->connection = mysqli_connect($this->databaseHost, $this->databaseUsername, $this->databasePassword, $this->databaseName);
     }
 
