@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { GameService } from '../game.service';
 import { apiPrefix } from '../apiPrefix';
 import { getTranslation } from '../translate';
@@ -7,6 +7,7 @@ import { getTranslation } from '../translate';
     selector: 'app-language',
     imports: [],
     templateUrl: './language.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './language.component.css'
 })
 export class LanguageComponent {

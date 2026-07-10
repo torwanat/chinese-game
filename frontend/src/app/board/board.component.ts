@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { TileComponent } from '../tile/tile.component';
 
 import { finishes, spawns, starts, tiles } from '../tileIDs';
@@ -10,6 +10,7 @@ import { Pawn, Tile } from '../types';
     selector: 'app-board',
     imports: [TileComponent],
     templateUrl: './board.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './board.component.css'
 })
 

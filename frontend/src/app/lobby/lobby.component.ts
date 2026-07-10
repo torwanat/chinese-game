@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { BoardComponent } from '../board/board.component';
 import { DiceComponent } from '../dice/dice.component';
 import { GameService } from '../game.service';
@@ -12,6 +12,7 @@ import { getTranslation } from '../translate';
     selector: 'app-lobby',
     imports: [BoardComponent, DiceComponent, LanguageComponent, CommonModule, LoginComponent],
     templateUrl: './lobby.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './lobby.component.css'
 })
 export class LobbyComponent {

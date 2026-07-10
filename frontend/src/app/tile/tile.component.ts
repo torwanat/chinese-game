@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, ChangeDetectionStrategy } from '@angular/core';
 import { BoardService } from '../board.service';
 
 @Component({
     selector: 'app-tile',
     imports: [CommonModule],
     templateUrl: './tile.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './tile.component.css'
 })
 export class TileComponent {

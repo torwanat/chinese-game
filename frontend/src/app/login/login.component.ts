@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { GameService } from '../game.service';
 import { getTranslation } from '../translate';
 
@@ -6,6 +6,7 @@ import { getTranslation } from '../translate';
     selector: 'app-login',
     imports: [],
     templateUrl: './login.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './login.component.css'
 })
 export class LoginComponent {

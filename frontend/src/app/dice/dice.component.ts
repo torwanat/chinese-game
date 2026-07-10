@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { BoardService } from '../board.service';
 import { GameService } from '../game.service';
 import { Player } from '../types';
@@ -9,6 +9,7 @@ import { getTranslation } from '../translate';
     selector: 'app-dice',
     imports: [],
     templateUrl: './dice.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './dice.component.css'
 })
 export class DiceComponent {
