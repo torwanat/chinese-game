@@ -1,4 +1,6 @@
 <div class="board-container">
-	<app-tile *ngFor="let element of tempList" [id]="element.id" [visible]="element.visible" [color]="element.color"
-		[pawn]="element.pawn" [highlighted]="element.highlighted" [proposition]="element.proposition"></app-tile>
-	<div>
+  @for (element of tempList; track element) {
+    <app-tile [id]="element.id" [visible]="element.visible" [color]="element.color"
+    [pawn]="element.pawn" [highlighted]="element.highlighted" [proposition]="element.proposition"></app-tile>
+  }
+  <div>

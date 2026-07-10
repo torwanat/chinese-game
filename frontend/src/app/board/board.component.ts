@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { TileComponent } from '../tile/tile.component';
-import { CommonModule } from '@angular/common';
+
 import { finishes, spawns, starts, tiles } from '../tileIDs';
 import { BoardService } from '../board.service';
 import { gamePath, offsets } from '../gamePath';
@@ -8,7 +8,7 @@ import { Pawn, Tile } from '../types';
 
 @Component({
     selector: 'app-board',
-    imports: [TileComponent, CommonModule],
+    imports: [TileComponent],
     templateUrl: './board.component.html',
     styleUrl: './board.component.css'
 })

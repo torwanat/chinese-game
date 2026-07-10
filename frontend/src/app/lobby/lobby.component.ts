@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { BoardComponent } from '../board/board.component';
 import { DiceComponent } from '../dice/dice.component';
 import { GameService } from '../game.service';
-import { CommonModule, NgFor, NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Player } from '../types';
 import { LanguageComponent } from '../language/language.component';
 import { LoginComponent } from '../login/login.component';
