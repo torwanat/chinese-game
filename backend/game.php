@@ -10,7 +10,7 @@ class Game implements JsonSerializable
 	public $winner = "";
 	public $timestamp = -1;
 
-	function __construct(object $template = null)
+	function __construct(?object $template = null)
 	{
 		if ($template) {
 			$this->uid = $template->uid;

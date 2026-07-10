@@ -4,7 +4,7 @@ require "player.php";
 require "game.php";
 require "headers.php";
 
-function sendStatus(string $status, string $nick = "", string $color = "", object $game = null)
+function sendStatus(string $status, string $nick = "", string $color = "", ?object $game = null)
 {
 	echo json_encode(
 		array(
