@@ -3,11 +3,10 @@ import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { BoardService } from '../board.service';
 
 @Component({
-	selector: 'app-tile',
-	standalone: true,
-	imports: [CommonModule],
-	templateUrl: './tile.component.html',
-	styleUrl: './tile.component.css'
+    selector: 'app-tile',
+    imports: [CommonModule],
+    templateUrl: './tile.component.html',
+    styleUrl: './tile.component.css'
 })
 export class TileComponent {
 	@Input() id = 0;

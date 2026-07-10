@@ -9,11 +9,10 @@ import { LoginComponent } from '../login/login.component';
 import { getTranslation } from '../translate';
 
 @Component({
-	selector: 'app-lobby',
-	standalone: true,
-	imports: [BoardComponent, DiceComponent, LanguageComponent, CommonModule, LoginComponent],
-	templateUrl: './lobby.component.html',
-	styleUrl: './lobby.component.css'
+    selector: 'app-lobby',
+    imports: [BoardComponent, DiceComponent, LanguageComponent, CommonModule, LoginComponent],
+    templateUrl: './lobby.component.html',
+    styleUrl: './lobby.component.css'
 })
 export class LobbyComponent {
 	public gameStarted: boolean = false;

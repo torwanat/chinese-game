@@ -6,11 +6,10 @@ import { apiPrefix } from '../apiPrefix';
 import { getTranslation } from '../translate';
 
 @Component({
-	selector: 'app-dice',
-	standalone: true,
-	imports: [],
-	templateUrl: './dice.component.html',
-	styleUrl: './dice.component.css'
+    selector: 'app-dice',
+    imports: [],
+    templateUrl: './dice.component.html',
+    styleUrl: './dice.component.css'
 })
 export class DiceComponent {
 	public result: number = 6;

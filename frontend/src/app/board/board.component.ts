@@ -7,11 +7,10 @@ import { gamePath, offsets } from '../gamePath';
 import { Pawn, Tile } from '../types';
 
 @Component({
-	selector: 'app-board',
-	standalone: true,
-	imports: [TileComponent, CommonModule],
-	templateUrl: './board.component.html',
-	styleUrl: './board.component.css'
+    selector: 'app-board',
+    imports: [TileComponent, CommonModule],
+    templateUrl: './board.component.html',
+    styleUrl: './board.component.css'
 })
 
 export class BoardComponent {

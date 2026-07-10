@@ -3,11 +3,10 @@ import { GameService } from '../game.service';
 import { getTranslation } from '../translate';
 
 @Component({
-	selector: 'app-login',
-	standalone: true,
-	imports: [],
-	templateUrl: './login.component.html',
-	styleUrl: './login.component.css'
+    selector: 'app-login',
+    imports: [],
+    templateUrl: './login.component.html',
+    styleUrl: './login.component.css'
 })
 export class LoginComponent {
 	public nick: string = "";
