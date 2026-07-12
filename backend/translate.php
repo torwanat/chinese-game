@@ -12,16 +12,16 @@ stream_copy_to_stream($rawInput, $tempStream);
 rewind($tempStream);
 $post_data = json_decode(stream_get_contents($tempStream), true);
 
-$language = $post_data['language'];
+$locale = $post_data['language'] . ".UTF-8";
+$language = $post_data['language'] == "pl_PL" ? "pl_PL:pl" : "en_US:en";
 
-putenv("LANG=" . $language);
-setlocale(LC_ALL, $language);
+putenv("LANG=$locale");
+putenv("LC_ALL=$locale");
+putenv("LANGUAGE=$language");
+setlocale(LC_ALL, $locale);
 
-$domain = "messages";
-bindtextdomain($domain, "Locale/nocache");
-bindtextdomain($domain, "Locale");
-bind_textdomain_codeset($domain, "UTF-8");
-
-textdomain($domain);
+bindtextdomain('messages', '/var/www/html/Locale');
+bind_textdomain_codeset('messages', 'UTF-8');
+textdomain('messages');
 
 echo json_encode(_($post_data['message']));
