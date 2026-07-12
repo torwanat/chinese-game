@@ -1,0 +1,44 @@
+name: Build and push Docker images
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Create .env for Compose
+        run: |
+          cat > .env <<EOF
+          APP_VERSION=${GITHUB_REF_NAME#v}
+          DB_DATABASE=chinese
+          DB_USER=chinese_user
+          DB_PASSWORD=dummy_password_for_build_only
+          MYSQL_ROOT_PASSWORD=dummy_root_password_for_build_only
+          EOF
+
+      - name: Set Docker Hub username in compose file
+        run: |
+          sed 's/torwanat/${{ secrets.DOCKERHUB_USERNAME }}/g' docker-compose.yml > docker-compose.ci.yml
+
+      - name: Build images
+        run: docker compose -f docker-compose.ci.yml build frontend backend
+
+      - name: Push images
+        run: docker compose -f docker-compose.ci.yml push frontend backend
