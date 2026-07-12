@@ -15,6 +15,11 @@
 	justify-content: space-around;
 }
 
+.player-container>p {
+	color: #FFFFFF;
+	text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.8);
+}
+
 .timer {
 	background-color: white;
 	border-radius: 10px;
