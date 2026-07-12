@@ -43,7 +43,7 @@ jobs:
         run: |
           mkdir -p deploy/docker
           cp docker-compose.yml deploy/docker-compose.yml
-          cp .env.example deploy/.env.example
+          cp env.example deploy/env.example
           cp docker/init.sql deploy/docker/init.sql
 
       - name: Ensure remote directories exist
@@ -61,7 +61,7 @@ jobs:
           host: ${{ secrets.TS_VPS_HOST }}
           username: ${{ secrets.TS_VPS_USER }}
           key: ${{ secrets.TS_VPS_SSH_KEY }}
-          source: "deploy/docker-compose.yml,deploy/.env.example,deploy/docker/init.sql"
+          source: "deploy/docker-compose.yml,deploy/env.example,deploy/docker/init.sql"
           target: ${{ secrets.TS_VPS_APP_DIR }}
           strip_components: 1
 
@@ -73,7 +73,7 @@ jobs:
           key: ${{ secrets.TS_VPS_SSH_KEY }}
           script: |
             cd ${{ secrets.TS_VPS_APP_DIR }}
-            test -f .env || cp .env.example .env
+            test -f .env || cp env.example .env
             APP_VERSION='${{ steps.version.outputs.app_version }}'
             if grep -q '^APP_VERSION=' .env; then
               sed -i "s/^APP_VERSION=.*/APP_VERSION=${APP_VERSION}/" .env
