@@ -1,7 +1,7 @@
 .tile {
 	box-sizing: border-box;
 	aspect-ratio: 1;
-	border: 1px solid black;
+	border: 1px solid var(--color-border);
 	margin: 10px;
 	text-align: center;
 	display: flex;
@@ -19,7 +19,7 @@
 	border-radius: 50%;
 	width: 50%;
 	height: 50%;
-	border: 3px solid white;
+	border: 3px solid var(--color-text-on-dark);
 }
 
 .highlighted {
@@ -38,5 +38,5 @@
 }
 
 .proposition {
-	background-color: khaki !important;
+	background-color: var(--color-border) !important;
 }

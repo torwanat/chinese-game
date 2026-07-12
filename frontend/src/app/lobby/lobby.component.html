@@ -1,32 +1,31 @@
 @if (playerNick == '') {
-  <div>
-    <app-login></app-login>
-  </div>
+<div>
+	<app-login></app-login>
+</div>
 } @else {
-  <div class="lobby">
-    @for (player of players; track player) {
-      <div class="player-container"
-        [ngStyle]="{'background-color': player.status > 0 ? player.color : 'none'}">
-        <p>{{player.nick}}</p>
-        @if (player.status == 3 || player.status == 4) {
-          <div class="timer">{{timeLeft}}</div>
-        }
-      </div>
-    }
-  </div>
-  <app-language></app-language>
-  @if (gameStarted) {
-    <div>
-      <app-dice></app-dice>
-      <app-board></app-board>
-    </div>
-  } @else {
-    @if (winner) {
-      <div>
-        <h1>{{winner}} {{wonText}}!</h1>
-      </div>
-    } @else {
-      <button (click)="toggleReady()">{{ready? notReadyText : readyText}}</button>
-    }
-  }
+<div class="lobby">
+	@for (player of players; track player) {
+	<div class="player-container" [ngStyle]="{'background-color': player.status > 0 ? player.color : 'none'}">
+		<p>{{player.nick ? player.nick : waitText}}</p>
+		@if (player.status == 3 || player.status == 4) {
+		<div class="timer">{{timeLeft}}</div>
+		}
+	</div>
+	}
+</div>
+<app-language></app-language>
+@if (gameStarted) {
+<div>
+	<app-dice></app-dice>
+	<app-board></app-board>
+</div>
+} @else {
+@if (winner) {
+<div>
+	<h1>{{winner}} {{wonText}}!</h1>
+</div>
+} @else {
+<button class="button-primary" (click)="toggleReady()">{{ready? notReadyText : readyText}}</button>
+}
+}
 }

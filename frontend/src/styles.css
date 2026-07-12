@@ -1,1 +1,43 @@
 /* You can add global styles to this file, and also import other style files */
+
+:root {
+	/* Core surfaces */
+	--color-bg: #2f2a26;
+	--color-bg-elevated: #3a342f;
+	--color-panel: #f7f1e8;
+	--color-panel-soft: #efe4d6;
+	--color-panel-muted: #e9ddcb;
+	--color-border: #d5c5b1;
+
+	/* Text */
+	--color-text: #3e2723;
+	--color-text-muted: #6b5a52;
+	--color-text-on-dark: #fff8f1;
+	--color-text-on-dark-muted: #d8ccc2;
+
+	/* Interactive accents */
+	--color-primary: #ffbf47;
+	--color-primary-hover: #f2ae2e;
+	--color-secondary: #ff6f61;
+	--color-secondary-hover: #f05e50;
+	--color-success: #6bbf59;
+	--color-success-hover: #57aa46;
+
+	/* Utility */
+	--color-focus: #a7d3e0;
+	--color-shadow: rgba(33, 22, 17, 0.18);
+}
+
+body {
+	background: var(--color-bg);
+	color: var(--color-text-on-dark);
+}
+
+.button-primary {
+	background: var(--color-primary);
+	color: var(--color-text);
+}
+
+.button-primary:hover {
+	background: var(--color-primary-hover);
+}

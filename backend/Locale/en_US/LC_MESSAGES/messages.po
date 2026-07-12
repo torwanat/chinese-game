@@ -47,3 +47,6 @@ msgstr "green"
 
 msgid "żółty"
 msgstr "yellow"
+
+msgid "Brak gracza"
+msgstr "No player"

@@ -9,11 +9,11 @@ import { LoginComponent } from '../login/login.component';
 import { getTranslation } from '../translate';
 
 @Component({
-    selector: 'app-lobby',
-    imports: [BoardComponent, DiceComponent, LanguageComponent, CommonModule, LoginComponent],
-    templateUrl: './lobby.component.html',
-    changeDetection: ChangeDetectionStrategy.Eager,
-    styleUrl: './lobby.component.css'
+	selector: 'app-lobby',
+	imports: [BoardComponent, DiceComponent, LanguageComponent, CommonModule, LoginComponent],
+	templateUrl: './lobby.component.html',
+	changeDetection: ChangeDetectionStrategy.Eager,
+	styleUrl: './lobby.component.css'
 })
 export class LobbyComponent {
 	public gameStarted: boolean = false;
@@ -25,6 +25,7 @@ export class LobbyComponent {
 	public readyText: string = "Ready!";
 	public notReadyText: string = "Not ready!";
 	public wonText: string = "won";
+	public waitText: string = "No player";
 	private timestamp: number = -1;
 
 	constructor(private gameService: GameService) {
@@ -37,6 +38,7 @@ export class LobbyComponent {
 		this.readyText = await getTranslation(this.readyText, this.gameService.language);
 		this.notReadyText = await getTranslation(this.notReadyText, this.gameService.language);
 		this.wonText = await getTranslation(this.wonText, this.gameService.language);
+		this.waitText = await getTranslation(this.waitText, this.gameService.language);
 
 		this.gameService.language$.subscribe(async (language: string) => {
 			console.log(language);
@@ -44,6 +46,7 @@ export class LobbyComponent {
 			this.readyText = await getTranslation(this.readyText, language);
 			this.notReadyText = await getTranslation(this.notReadyText, language);
 			this.wonText = await getTranslation(this.wonText, language);
+			this.waitText = await getTranslation(this.waitText, language);
 		});
 	}
 
