@@ -128,7 +128,7 @@ export class GameService {
 			previousSession = JSON.parse(localStorage.getItem("session")!.toString());
 		}
 		await this.sendRequest(previousSession['nick'], previousSession['color'], previousSession['uid'], true);
-		setInterval(() => this.sendRequest(this.playerNick, this.playerColor, this.game.uid), 3000);
+		setInterval(() => this.sendRequest(this.playerNick, this.playerColor, this.game.uid), 1000);
 	}
 
 	public changeLanguage(language: string) {
