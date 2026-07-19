@@ -41,7 +41,7 @@ export class GameService {
 		timestamp: 0
 	}
 
-	public language: string = "pl_PL";
+	public language: string = "en_US";
 
 	constructor() {
 		this.gameStarted$ = this.gameStartedSubject.asObservable();

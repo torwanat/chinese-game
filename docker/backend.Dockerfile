@@ -9,9 +9,9 @@ RUN apt-get update \
 	&& a2enmod rewrite \
 	&& rm -rf /var/lib/apt/lists/*
 
-ENV LANG=pl_PL.UTF-8
-ENV LANGUAGE=pl_PL:pl
-ENV LC_ALL=pl_PL.UTF-8
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+ENV LC_ALL=en_US.UTF-8
 
 WORKDIR /var/www/html
 COPY ./backend/ /var/www/html/
