@@ -37,3 +37,10 @@ docker compose pull
 docker compose up -d
 ```
 
+# Technologies used
+
+- **Frontend**: Angular 22, TypeScript 6, RxJS 7.8
+- **Backend**: PHP 8.2
+- **Localization**: gettext (PO/MO files)
+- **Build**: Angular CLI 22
+
