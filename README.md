@@ -1,70 +1,39 @@
-# Running with Docker Compose
+# Chinese game
 
-This project is distributed as two custom Docker Hub images for the application layer and the official MySQL image for the database layer.
-The Docker Compose file should be kept in the source repository together with `.env.example`, initialization scripts, and usage instructions so that image tags and startup configuration stay in sync.
+The classic Chinese board game, written in Angular with PHP backend. The application is production-ready and contenerized, with frontend and backend images available at [Dockerhub][https://hub.docker.com/repositories/torwanat]. It is also hosted at [https://chinese.torvan.eu/].
 
-## Files included
+# Features
 
-- `docker-compose.yml` — starts the full stack: frontend, backend, and MySQL.
-- `.env.example` — template for required environment variables and secrets.
-- `docker/init.sql` — first-run database initialization script mounted into MySQL.
+- Up to 4 players multiplayer experience
+- Automatic mathcmaking and lobby management
+- Multi language support
+- Time limited moves to prevent stalling the game
+- Highliting of available moves
+- Session persistence 
+- And more!
 
-## Prerequisites
+# Prerequisites
 
-- Docker Engine with Docker Compose installed.
-- A Docker Hub account since the application images are private.
+- Docker Engine with Docker Compose installed
 
-## First-time setup
+# Usage
 
-1. Copy the example environment file:
-   ```bash
-   cp .env.example .env
-   ```
-2. Edit `.env` and set secure values for database credentials and the application version tag.
-3. Log in to Docker Hub:
-   ```bash
-   docker login
-   ```
+1. Copy `docker-compose.yml` and  `docker/init.sql` into your desired directory.
+2. Edit the `.env` file (from `env.example`) and set the desired application version and database credentials.
+3. Pull the published images `docker compose pull`
+4. Start the applications `docker compose up`
 
-## Start the stack
+---
 
-Pull the published images and start all services:
+- To stop the applications, use `docker compose down`
+- To reset the database, use `docker compose down -v` (Initialization scripts in `docker/init.sql` run only when the database is created for the first time with a fresh volume!)
+
+# Updating to a new release
+
+The application is updated periodically. To update deployed containers to a new version, change `APP_VERSION` in `.env` to the desired one, and then pull and recreate the containers:
 
 ```bash
 docker compose pull
 docker compose up -d
 ```
-
-This downloads the published frontend and backend images from Docker Hub and pulls `mysql:8.0` as the database image.
-
-## Stop the stack
-
-```bash
-docker compose down
-```
-
-This stops the containers but keeps the named MySQL volume, so database data persists across restarts unless volumes are explicitly removed.
-
-## Reset the database
-
-To remove the database volume and recreate MySQL from scratch:
-
-```bash
-docker compose down -v
-docker compose up -d
-```
-
-Initialization scripts in `/docker-entrypoint-initdb.d/` run only when the database is created for the first time with a fresh volume.
-
-## Updating to a new release
-
-1. Change `APP_VERSION` in `.env` to the new published version.
-2. Pull the updated images:
-   ```bash
-   docker compose pull
-   ```
-3. Recreate the containers:
-   ```bash
-   docker compose up -d
-   ```
 
