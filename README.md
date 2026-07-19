@@ -1,6 +1,6 @@
 # Chinese game
 
-The classic Chinese board game, written in Angular with PHP backend. The application is production-ready and contenerized, with frontend and backend images available at [Dockerhub][https://hub.docker.com/repositories/torwanat]. It is also hosted at [https://chinese.torvan.eu/].
+The classic Chinese board game, written in Angular with PHP backend. The application is production-ready and contenerized, with frontend and backend images available at [Dockerhub](https://hub.docker.com/repositories/torwanat). It is also hosted at [https://chinese.torvan.eu/](https://chinese.torvan.eu/).
 
 # Features
 
